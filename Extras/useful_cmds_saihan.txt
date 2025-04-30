@@ -1,1 +1,2 @@
-mysqldump -u root -p Shahajjo > donation_backup.sql
+-- SQL File Dump, Linux
+mysqldump -u root -p Shahajjo > Shahjjo.sql
