@@ -1,2 +1,7 @@
 -- SQL File Dump, Linux
-mysqldump -u root -p Shahajjo > Shahjjo.sql
+mysqldump -u root -p Shahajjo > Shahjjo.sql\
+
+-- Fedora Alias
+xamppstart
+xamppstop
+
