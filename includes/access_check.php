@@ -14,4 +14,3 @@ if (!isset($_SESSION['user_type']) || $_SESSION['user_type'] !== 'donor') {
     exit();
 }
 */
-?>

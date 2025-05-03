@@ -64,13 +64,13 @@ if (!empty($errors)) {
 // Process registration
 try {
     $pdo->beginTransaction();
-    
+
     // Hash password
     $password_hash = password_hash($password, PASSWORD_BCRYPT);
-    
+
     // Insert into user_table
     $stmt = $pdo->prepare("
-        INSERT INTO user_table 
+        INSERT INTO User_table 
         (first_name, middle_name, last_name, email, password, user_type, role) 
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
@@ -84,7 +84,7 @@ try {
         $user_type // role matches user_type
     ]);
     $user_id = $pdo->lastInsertId();
-    
+
     // Insert into specific table
     if ($user_type === 'donor') {
         $stmt = $pdo->prepare("INSERT INTO donor_table (user_id) VALUES (?)");
@@ -95,18 +95,17 @@ try {
     if ($user_type !== 'admin') {
         $stmt->execute([$user_id]);
     }
-    
+
     $pdo->commit();
-    
+
     // Clear session data
     unset($_SESSION['register_errors']);
     unset($_SESSION['register_data']);
-    
+
     // Set success message
     $_SESSION['registration_success'] = true;
     header("Location: login.php");
     exit();
-
 } catch (PDOException $e) {
     $pdo->rollBack();
     $_SESSION['register_errors'] = ["Registration failed. Please try again."];

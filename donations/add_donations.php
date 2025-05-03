@@ -1,5 +1,5 @@
-<?php 
-include '../includes/header.php'; 
+<?php
+include '../includes/header.php';
 include '../includes/config.php';
 include '../includes/auth.php'; // Check if user is logged in
 ?>
@@ -10,17 +10,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $recipient_id = sanitize($_POST['recipient_id']);
     $amount = sanitize($_POST['amount']);
     $type = sanitize($_POST['type']);
-    
+
     // Start transaction
     $conn->begin_transaction();
-    
+
     try {
         // Insert into total donations
         $sql = "INSERT INTO Total_donations (Donor_ID, Recipient_ID, Donations_amount, donation_type)
                 VALUES ($donor_id, $recipient_id, $amount, '$type')";
         $conn->query($sql);
         $donation_id = $conn->insert_id;
-        
+
         // Insert into specific donation type table
         if ($type == 'financial') {
             $conn->query("INSERT INTO Financial_donations (Donation_no, Money_amount) VALUES ($donation_id, $amount)");
@@ -31,16 +31,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } elseif ($type == 'jakat') {
             $conn->query("INSERT INTO Jakat_donation (Donation_no, Jakat_amount) VALUES ($donation_id, $amount)");
         }
-        
+
         // Update donor's total donation
         $conn->query("UPDATE Donor_table SET Total_donation = Total_donation + $amount, Last_donation = CURDATE() WHERE Donor_UID = $donor_id");
-        
+
         // Update recipient's account
         $conn->query("UPDATE Recipient_account SET Money = Money + $amount WHERE Recipient_UID = $recipient_id");
-        
+
         // Commit transaction
         $conn->commit();
-        
+
         echo "<div class='alert alert-success'>Donation recorded successfully!</div>";
     } catch (Exception $e) {
         $conn->rollback();
@@ -88,19 +88,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </form>
 
 <script>
-document.getElementById('donationType').addEventListener('change', function() {
-    const type = this.value;
-    const amountField = document.getElementById('amountField');
-    const itemField = document.getElementById('itemField');
-    
-    if (type === 'essential') {
-        amountField.classList.add('d-none');
-        itemField.classList.remove('d-none');
-    } else {
-        amountField.classList.remove('d-none');
-        itemField.classList.add('d-none');
-    }
-});
+    document.getElementById('donationType').addEventListener('change', function() {
+        const type = this.value;
+        const amountField = document.getElementById('amountField');
+        const itemField = document.getElementById('itemField');
+
+        if (type === 'essential') {
+            amountField.classList.add('d-none');
+            itemField.classList.remove('d-none');
+        } else {
+            amountField.classList.remove('d-none');
+            itemField.classList.add('d-none');
+        }
+    });
 </script>
 
 <?php include '../includes/footer.php'; ?>

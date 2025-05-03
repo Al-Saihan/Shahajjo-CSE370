@@ -1,5 +1,5 @@
     </div> <!-- Closing container div from header -->
-    
+
     <footer class="bg-dark text-white py-4 mt-5">
         <div class="container">
             <div class="row">
@@ -36,5 +36,6 @@
     <script src="../assets/js/script.js"></script>
     <!-- Load Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</body>
-</html>
+    </body>
+
+    </html>

@@ -60,7 +60,6 @@ try {
             header("Location: donor/profile.php");
     }
     exit();
-
 } catch (PDOException $e) {
     $_SESSION['login_error'] = "Login failed. Please try again.";
     error_log("Login error: " . $e->getMessage());

@@ -1,10 +1,12 @@
 <?php
 // Authentication Functions
-function isLoggedIn() {
+function isLoggedIn()
+{
     return isset($_SESSION['user_id']);
 }
 
-function requireLogin() {
+function requireLogin()
+{
     if (!isLoggedIn()) {
         $_SESSION['redirect_url'] = $_SERVER['REQUEST_URI'];
         header("Location: login.php");
@@ -12,7 +14,8 @@ function requireLogin() {
     }
 }
 
-function requireRole($role) {
+function requireRole($role)
+{
     requireLogin();
     if ($_SESSION['user_type'] !== $role) {
         header("Location: unauthorized.php");
@@ -20,7 +23,8 @@ function requireRole($role) {
     }
 }
 
-function getCurrentUser() {
+function getCurrentUser()
+{
     global $conn;
     if (isLoggedIn()) {
         $user_id = $_SESSION['user_id'];
@@ -32,4 +36,3 @@ function getCurrentUser() {
     }
     return null;
 }
-?>

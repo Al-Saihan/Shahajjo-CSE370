@@ -25,7 +25,7 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address = $_POST['address'] ?? '';
     $contact = $_POST['contact_number'] ?? '';
-    
+
     try {
         $stmt = $pdo->prepare("
             UPDATE donor_table 
@@ -33,11 +33,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             WHERE user_id = ?
         ");
         $stmt->execute([$address, $contact, $_SESSION['user_id']]);
-        
+
         // Mark profile as complete
         $stmt = $pdo->prepare("UPDATE user_table SET profile_complete = TRUE WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
-        
+
         $_SESSION['profile_update'] = "Profile updated successfully!";
         header("Location: profile.php");
         exit();
@@ -48,14 +48,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Donor Profile | Shahajjo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         .profile-card {
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .info-box {
             background: #f8f9fa;
             border-radius: 8px;
@@ -64,6 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
@@ -82,11 +85,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="col-md-4">
                 <div class="card profile-card mb-4">
                     <div class="card-body text-center">
-                        <h4><?= htmlspecialchars($donor['first_name'].' '.$donor['last_name']) ?></h4>
+                        <h4><?= htmlspecialchars($donor['first_name'] . ' ' . $donor['last_name']) ?></h4>
                         <p class="text-muted">Donor Profile</p>
                         <hr>
                         <p><strong>Member Since:</strong><br>
-                        <?= date('F j, Y', strtotime($donor['registration_date'])) ?></p>
+                            <?= date('F j, Y', strtotime($donor['registration_date'])) ?></p>
                     </div>
                 </div>
             </div>
@@ -113,17 +116,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Contact Number</label>
-                                    <input type="tel" class="form-control" name="contact_number" 
-                                           value="<?= htmlspecialchars($donor['contact_number'] ?? '') ?>" required>
+                                    <input type="tel" class="form-control" name="contact_number"
+                                        value="<?= htmlspecialchars($donor['contact_number'] ?? '') ?>" required>
                                 </div>
                             </div>
 
                             <div class="info-box">
                                 <h5>Address</h5>
                                 <div class="mb-3">
-                                    <textarea class="form-control" name="address" rows="4" required><?= 
-                                        htmlspecialchars($donor['address'] ?? '') 
-                                    ?></textarea>
+                                    <textarea class="form-control" name="address" rows="4" required><?=
+                                                                                                    htmlspecialchars($donor['address'] ?? '')
+                                                                                                    ?></textarea>
                                 </div>
                             </div>
 
@@ -135,4 +138,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </body>
+
 </html>

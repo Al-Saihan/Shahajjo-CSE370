@@ -28,6 +28,7 @@ try {
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Admin Dashboard | Shahajjo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -38,22 +39,28 @@ try {
             padding: 15px;
             margin-top: 10px;
         }
+
         .badge-admin {
             background-color: #dc3545;
         }
+
         .badge-donor {
             background-color: #28a745;
         }
+
         .badge-recipient {
             background-color: #17a2b8;
         }
+
         .table-hover tbody tr:hover {
             background-color: rgba(0, 0, 0, 0.05);
             cursor: pointer;
         }
+
         .detail-row {
             background-color: #f8f9fa;
         }
+
         .address-box {
             background-color: white;
             border: 1px solid #dee2e6;
@@ -63,6 +70,7 @@ try {
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container">
@@ -93,75 +101,74 @@ try {
                 </thead>
                 <tbody>
                     <?php foreach ($users as $user): ?>
-                    <tr data-toggle="collapse" data-target="#details-<?= $user['id'] ?>" aria-expanded="false" aria-controls="details-<?= $user['id'] ?>">
-                        <td><?= $user['id'] ?></td>
-                        <td>
-                            <?= htmlspecialchars($user['first_name'].' '.$user['last_name']) ?>
-                            <?php if ($user['middle_name']): ?>
-                                <br><small class="text-muted"><?= htmlspecialchars($user['middle_name']) ?></small>
-                            <?php endif; ?>
-                        </td>
-                        <td><?= htmlspecialchars($user['email']) ?></td>
-                        <td>
-                            <span class="badge <?= 
-                                $user['user_type'] === 'donor' ? 'badge-donor' : 'badge-recipient'
-                            ?>">
-                                <?= ucfirst($user['user_type']) ?>
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge <?= 
-                                $user['role'] === 'admin' ? 'badge-admin' : 
-                                ($user['user_type'] === 'donor' ? 'badge-donor' : 'badge-recipient')
-                            ?>">
-                                <?= ucfirst($user['role']) ?>
-                            </span>
-                        </td>
-                        <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
-                        <td>
-                            <a href="view_user.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-info">View</a>
-                            <a href="edit_user.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                        </td>
-                    </tr>
-                    <tr class="detail-row">
-                        <td colspan="7" class="p-0">
-                            <div id="details-<?= $user['id'] ?>" class="collapse">
-                                <div class="user-details">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h5>Basic Information</h5>
-                                            <p><strong>Full Name:</strong> 
-                                                <?= htmlspecialchars($user['first_name'] . ' ' . 
-                                                   ($user['middle_name'] ? $user['middle_name'] . ' ' : '') . 
-                                                   $user['last_name']) ?>
-                                            </p>
-                                            <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
-                                            <p><strong>Account Type:</strong> <?= ucfirst($user['user_type']) ?></p>
-                                            <p><strong>Account Role:</strong> <?= ucfirst($user['role']) ?></p>
-                                            <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <?php if ($user['user_type'] === 'donor'): ?>
-                                                <h5>Donor Information</h5>
-                                                <div class="address-box">
-                                                    <p><strong>Address:</strong></p>
-                                                    <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
-                                                </div>
-                                                <p><strong>Contact Number:</strong> <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
-                                            <?php elseif ($user['user_type'] === 'recipient'): ?>
-                                                <h5>Recipient Information</h5>
-                                                <div class="address-box">
-                                                    <p><strong>Address:</strong></p>
-                                                    <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
-                                                </div>
-                                                <p><strong>Contact Number:</strong> <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
-                                            <?php endif; ?>
+                        <tr data-toggle="collapse" data-target="#details-<?= $user['id'] ?>" aria-expanded="false" aria-controls="details-<?= $user['id'] ?>">
+                            <td><?= $user['id'] ?></td>
+                            <td>
+                                <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                                <?php if ($user['middle_name']): ?>
+                                    <br><small class="text-muted"><?= htmlspecialchars($user['middle_name']) ?></small>
+                                <?php endif; ?>
+                            </td>
+                            <td><?= htmlspecialchars($user['email']) ?></td>
+                            <td>
+                                <span class="badge <?=
+                                                    $user['user_type'] === 'donor' ? 'badge-donor' : 'badge-recipient'
+                                                    ?>">
+                                    <?= ucfirst($user['user_type']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge <?=
+                                                    $user['role'] === 'admin' ? 'badge-admin' : ($user['user_type'] === 'donor' ? 'badge-donor' : 'badge-recipient')
+                                                    ?>">
+                                    <?= ucfirst($user['role']) ?>
+                                </span>
+                            </td>
+                            <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
+                            <td>
+                                <a href="view_user.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-info">View</a>
+                                <a href="edit_user.php?id=<?= $user['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                            </td>
+                        </tr>
+                        <tr class="detail-row">
+                            <td colspan="7" class="p-0">
+                                <div id="details-<?= $user['id'] ?>" class="collapse">
+                                    <div class="user-details">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <h5>Basic Information</h5>
+                                                <p><strong>Full Name:</strong>
+                                                    <?= htmlspecialchars($user['first_name'] . ' ' .
+                                                        ($user['middle_name'] ? $user['middle_name'] . ' ' : '') .
+                                                        $user['last_name']) ?>
+                                                </p>
+                                                <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+                                                <p><strong>Account Type:</strong> <?= ucfirst($user['user_type']) ?></p>
+                                                <p><strong>Account Role:</strong> <?= ucfirst($user['role']) ?></p>
+                                                <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <?php if ($user['user_type'] === 'donor'): ?>
+                                                    <h5>Donor Information</h5>
+                                                    <div class="address-box">
+                                                        <p><strong>Address:</strong></p>
+                                                        <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
+                                                    </div>
+                                                    <p><strong>Contact Number:</strong> <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
+                                                <?php elseif ($user['user_type'] === 'recipient'): ?>
+                                                    <h5>Recipient Information</h5>
+                                                    <div class="address-box">
+                                                        <p><strong>Address:</strong></p>
+                                                        <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
+                                                    </div>
+                                                    <p><strong>Contact Number:</strong> <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                        </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
@@ -176,7 +183,7 @@ try {
             $('tr[data-toggle="collapse"]').click(function() {
                 $(this).next('tr').find('.collapse').collapse('toggle');
             });
-            
+
             // Prevent action buttons from triggering row collapse
             $('.btn').click(function(e) {
                 e.stopPropagation();
@@ -184,4 +191,5 @@ try {
         });
     </script>
 </body>
+
 </html>

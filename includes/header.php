@@ -10,9 +10,11 @@
 <?php if (session_status() === PHP_SESSION_NONE) session_start(); ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <!-- Your existing head content -->
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
@@ -33,20 +35,22 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav">
-                    <?php if(isset($_SESSION['user_id'])): ?>
+                    <?php if (isset($_SESSION['user_id'])): ?>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                                 <i class="fas fa-user me-1"></i>
-                                <?php 
-                                    echo htmlspecialchars($_SESSION['f_name'] ?? 'User');
-                                    if (!empty($_SESSION['l_name'])) {
-                                        echo ' ' . htmlspecialchars($_SESSION['l_name']);
-                                    }
+                                <?php
+                                echo htmlspecialchars($_SESSION['f_name'] ?? 'User');
+                                if (!empty($_SESSION['l_name'])) {
+                                    echo ' ' . htmlspecialchars($_SESSION['l_name']);
+                                }
                                 ?>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="profile.php">Profile</a></li>
-                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
                                 <li><a class="dropdown-item" href="logout.php">Logout</a></li>
                             </ul>
                         </li>

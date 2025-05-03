@@ -16,4 +16,3 @@ if (isset($redirects[$_SESSION['user_type']])) {
     header("Location: " . ROOT_PATH . "/login.php");
 }
 exit();
-?>
