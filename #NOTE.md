@@ -2,8 +2,7 @@
 
 1. Fix The Database, Add Database Copy-Paste File
 2. Commit, the formatted files
-3. Ignore add_donations.php
-4.
+3.
 
 # Who is working on what:
 
@@ -15,7 +14,7 @@
 
 # Ignore Files:
 
-1. ***
-2. ***
+1. "admin" folder errors
+2. "donations" folder errors
 3. ***
 4. ***
