@@ -90,24 +90,26 @@ try {
         $last_name,
         $email,
         $password_hash,
-        $user_type, // ADMIN
-        $role // role matches user_type
+        $user_type, // DONOR, RECIPIENT, or NULL for admin
+        $role // DONOR, RECIPIENT, or ADMIN
     ]);
 
+    // //
+    $user_id = $pdo->lastInsertId();
 
-    // $user_id = $pdo->lastInsertId();
-    // INSERT INTO user_table (first_name, middle_name, last_name, email, password, user_type, role) VALUES (a, b, c, d@gmail.com, asdasdasdasdad, NULL, admin)
-    // // Insert into specific table
-    // if ($user_type == 'donor') {
-    //     $stmt = $pdo->prepare("INSERT INTO donor_table (user_id) VALUES (?)");
-    // } elseif ($user_type == 'recipient') {
-    //     $stmt = $pdo->prepare("INSERT INTO recipient_table (user_id) VALUES (?)");
-    // }
-    // // Admin doesn't need a separate table entry
-    // if ($user_type != 'admin') {
-    //     $stmt->execute([$user_id]);
-    // }
+    // Insert into specific table
+    if ($user_type == 'donor') {
+        $stmt = $pdo->prepare("INSERT INTO donor_table (user_id) VALUES (?)");
+    } elseif ($user_type == 'recipient') {
+        $stmt = $pdo->prepare("INSERT INTO recipient_table (user_id) VALUES (?)");
+    } else {
+        // TODO: THIS THING DOESNT FUCKING WORK, WILL FIX TOMORROW. TQ BYE BYE. ( DONT REGISTER AS ADMIN FOR NOW)
+        // $stmt = $pdo->prepare("INSERT INTO admin_table (access_level) VALUES (?)");
+    }
+    // ! DONT REGISTER AS ADMIN FOR NOW (2) 
+    $stmt->execute([$user_id]);
 
+    // //
     $pdo->commit();
 
     // Clear session data
