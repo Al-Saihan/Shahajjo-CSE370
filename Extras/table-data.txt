@@ -26,7 +26,7 @@ CREATE TABLE user_table (
 
 -- 3. DONOR_TABLE - Stores donor-specific details and donations history
 CREATE TABLE donor_table (
-    id INT(11) PRIMARY KEY,
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total_donations INT(11) DEFAULT 0,
@@ -39,7 +39,7 @@ CREATE TABLE donor_table (
 
 -- 4. RECIPIENT_TABLE - Stores recipient-specific details and received donations history
 CREATE TABLE recipient_table (
-    id INT(11) PRIMARY KEY,
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     received_help INT(11) DEFAULT 0,
