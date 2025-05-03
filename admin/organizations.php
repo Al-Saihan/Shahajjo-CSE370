@@ -1,4 +1,4 @@
-<?php 
+<?php
 include '../../includes/header.php';
 requireAdmin();
 
@@ -9,12 +9,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $bin = sanitize($_POST['bin']);
         $branch = sanitize($_POST['branch']);
         $account = sanitize($_POST['account']);
-        
+
         $sql = "INSERT INTO Organization_table (Org_BIN, Name, Branch, Account)
                 VALUES ('$bin', '$name', '$branch', '$account')";
         $conn->query($sql);
     }
-    
+
     if (isset($_POST['delete'])) {
         $bin = sanitize($_POST['bin']);
         $conn->query("DELETE FROM Organization_table WHERE Org_BIN = '$bin'");
@@ -46,17 +46,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <?php
                     $sql = "SELECT * FROM Organization_table";
                     $result = $conn->query($sql);
-                    
+
                     if ($result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
+                        while ($row = $result->fetch_assoc()) {
                             echo '<tr>
-                                    <td>'.$row['Org_BIN'].'</td>
-                                    <td>'.$row['Name'].'</td>
-                                    <td>'.$row['Branch'].'</td>
-                                    <td>'.$row['Account'].'</td>
+                                    <td>' . $row['Org_BIN'] . '</td>
+                                    <td>' . $row['Name'] . '</td>
+                                    <td>' . $row['Branch'] . '</td>
+                                    <td>' . $row['Account'] . '</td>
                                     <td>
                                         <form method="post" style="display:inline">
-                                            <input type="hidden" name="bin" value="'.$row['Org_BIN'].'">
+                                            <input type="hidden" name="bin" value="' . $row['Org_BIN'] . '">
                                             <button type="submit" name="delete" class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i>
                                             </button>
