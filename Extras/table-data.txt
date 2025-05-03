@@ -1,4 +1,6 @@
+DROP DATABASE shahajjo_db;
 CREATE DATABASE shahajjo_db;
+USE shahajjo_db;
 
 CREATE TABLE Admin_table (
   Admin_ID VARCHAR(10) PRIMARY KEY,
