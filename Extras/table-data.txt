@@ -2,103 +2,104 @@ DROP DATABASE shahajjo_db;
 CREATE DATABASE shahajjo_db;
 USE shahajjo_db;
 
-CREATE TABLE Admin_table (
-  Admin_ID VARCHAR(10) PRIMARY KEY,
-  Admin_pass VARCHAR(255),
-  Access_level VARCHAR(50)
+CREATE TABLE admin_table (
+  admin_id VARCHAR(10) PRIMARY KEY,
+  admin_pass VARCHAR(255),
+  access_level VARCHAR(50)
 );
 
-CREATE TABLE User_table (
-  UID VARCHAR(10) PRIMARY KEY,
-  F_name VARCHAR(100),
-  M_Name VARCHAR(100),
-  L_Name VARCHAR(100),
-  Phone_no VARCHAR(20) UNIQUE NOT NULL,
+CREATE TABLE user_table (
+  uid VARCHAR(10) PRIMARY KEY,
+  f_name VARCHAR(100),
+  m_name VARCHAR(100),
+  l_name VARCHAR(100),
+  phone_no VARCHAR(20) UNIQUE NOT NULL,
   email VARCHAR(255) UNIQUE NOT NULL,
-  NID VARCHAR(100) UNIQUE NOT NULL,
-  Password VARCHAR(255),
-  Reg_date DATE,
-  Street VARCHAR(255),
-  City VARCHAR(100),
-  A_Verifier VARCHAR(10),
-  FOREIGN KEY (A_Verifier) REFERENCES Admin_table(Admin_ID)
+  nid VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(255),
+  reg_date DATE,
+  street VARCHAR(255),
+  city VARCHAR(100),
+  a_verifier VARCHAR(10),
+  FOREIGN KEY (a_verifier) REFERENCES admin_table(admin_id)
 );
 
-CREATE TABLE Donor_table (
-  Donor_UID VARCHAR(10) PRIMARY KEY,
-  Total_donation DECIMAL(10,2),
-  Last_donation DATE,
-  Total_income DECIMAL(10,2),
-  FOREIGN KEY (Donor_UID) REFERENCES User_table(UID)
+CREATE TABLE donor_table (
+  donor_uid VARCHAR(10) PRIMARY KEY,
+  total_donation DECIMAL(10,2),
+  last_donation DATE,
+  total_income DECIMAL(10,2),
+  FOREIGN KEY (donor_uid) REFERENCES user_table(uid)
 );
 
-CREATE TABLE Recipient_table (
-  Recipient_UID VARCHAR(10) PRIMARY KEY,
-  Cause TEXT,
-  Donation_Goal INT,
-  Last_received DATE,
-  FOREIGN KEY (Recipient_UID) REFERENCES User_table(UID)
+CREATE TABLE recipient_table (
+  recipient_uid VARCHAR(10) PRIMARY KEY,
+  cause TEXT,
+  donation_goal INT,
+  last_received DATE,
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(uid)
 );
 
-CREATE TABLE Saving_account (
-  Recipient_UID VARCHAR(10),
-  Account_no VARCHAR(10) PRIMARY KEY,
-  Time_limit DATE,
-  Money DECIMAL(10,2),
-  FOREIGN KEY (Recipient_UID) REFERENCES User_table(UID)
+CREATE TABLE saving_account (
+  recipient_uid VARCHAR(10),
+  account_no VARCHAR(10) PRIMARY KEY,
+  time_limit DATE,
+  money DECIMAL(10,2),
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(uid)
 );
 
-CREATE TABLE Organization_table (
-  Org_BIN INT PRIMARY KEY,
-  Name VARCHAR(255),
-  Branch VARCHAR(255),
-  Account VARCHAR(10)
+CREATE TABLE organization_table (
+  org_bin INT PRIMARY KEY,
+  name VARCHAR(255),
+  branch VARCHAR(255),
+  account VARCHAR(10)
 );
 
-CREATE TABLE Total_donations (
-  Donor_ID VARCHAR(10),
-  Donation_no INT PRIMARY KEY,
-  Donations_amount DECIMAL(10,2),
-  Donation_date DATE,
-  Confirmation BOOLEAN,
-  FOREIGN KEY (Donor_ID) REFERENCES Donor_table(Donor_UID)
+CREATE TABLE total_donations (
+  donor_id VARCHAR(10),
+  donation_no INT PRIMARY KEY,
+  donations_amount DECIMAL(10,2),
+  donation_date DATE,
+  confirmation BOOLEAN,
+  FOREIGN KEY (donor_id) REFERENCES donor_table(donor_uid)
 );
 
-CREATE TABLE Receives (
-  Donation_no INT,
-  Recipient_UID VARCHAR(10),
-  Org_BIN INT,
-  Donation_date DATE,
-  Donation_amount DECIMAL(10,2),
-  PRIMARY KEY (Donation_no, Recipient_UID, Org_BIN),
-  FOREIGN KEY (Donation_no) REFERENCES Total_donations(Donation_no),
-  FOREIGN KEY (Recipient_UID) REFERENCES User_table(UID),
-  FOREIGN KEY (Org_BIN) REFERENCES Organization_table(Org_BIN)
+CREATE TABLE receives (
+  donation_no INT,
+  recipient_uid VARCHAR(10),
+  org_bin INT,
+  donation_date DATE,
+  donation_amount DECIMAL(10,2),
+  PRIMARY KEY (donation_no, recipient_uid, org_bin),
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no),
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(uid),
+  FOREIGN KEY (org_bin) REFERENCES organization_table(org_bin)
 );
 
-CREATE TABLE Financial_donations (
-  Donation_no INT PRIMARY KEY,
-  Money_amount DECIMAL(10,2),
-  FOREIGN KEY (Donation_no) REFERENCES Total_donations(Donation_no)
+CREATE TABLE financial_donations (
+  donation_no INT PRIMARY KEY,
+  money_amount DECIMAL(10,2),
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
 );
 
-CREATE TABLE Essential_needs (
-  Donation_no INT PRIMARY KEY,
-  Item_name VARCHAR(255),
-  Item_quantity INT,
-  FOREIGN KEY (Donation_no) REFERENCES Total_donations(Donation_no)
+CREATE TABLE essential_needs (
+  donation_no INT PRIMARY KEY,
+  item_name VARCHAR(255),
+  item_quantity INT,
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
 );
 
-CREATE TABLE Jakat_donation (
-  Donation_no INT PRIMARY KEY,
-  Jakat_amount DECIMAL(10,2),
-  FOREIGN KEY (Donation_no) REFERENCES Total_donations(Donation_no)
+CREATE TABLE jakat_donation (
+  donation_no INT PRIMARY KEY,
+  jakat_amount DECIMAL(10,2),
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
 );
 
-CREATE TABLE Feedback_table (
-  UID VARCHAR(10),
-  Review TEXT,
-  Posting_date DATE,
-  PRIMARY KEY (UID, Posting_date),
-  FOREIGN KEY (UID) REFERENCES User_table(UID)
+CREATE TABLE feedback_table (
+  uid VARCHAR(10),
+  review TEXT,
+  posting_date DATE,
+  PRIMARY KEY (uid, posting_date),
+  FOREIGN KEY (uid) REFERENCES user_table(uid)
 );
+
