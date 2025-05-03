@@ -1,53 +1,64 @@
-DROP DATABASE shahajjo_db;
+DROP DATABASE IF EXISTS shahajjo_db;
 CREATE DATABASE shahajjo_db;
 USE shahajjo_db;
 
+-- 1. ADMIN_TABLE - Stores admin credentials and access levels
 CREATE TABLE admin_table (
   admin_id VARCHAR(10) PRIMARY KEY,
   admin_pass VARCHAR(255),
   access_level VARCHAR(50)
 );
 
+-- 2. USER_TABLE - Stores user information with roles and statuses
 CREATE TABLE user_table (
-  uid VARCHAR(10) PRIMARY KEY,
-  f_name VARCHAR(100),
-  m_name VARCHAR(100),
-  l_name VARCHAR(100),
-  phone_no VARCHAR(20) UNIQUE NOT NULL,
-  email VARCHAR(255) UNIQUE NOT NULL,
-  nid VARCHAR(100) UNIQUE NOT NULL,
-  password VARCHAR(255),
-  reg_date DATE,
-  street VARCHAR(255),
-  city VARCHAR(100),
-  a_verifier VARCHAR(10),
-  FOREIGN KEY (a_verifier) REFERENCES admin_table(admin_id)
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('donor', 'recipient', 'admin') NOT NULL DEFAULT 'donor',
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    profile_complete TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 3. DONOR_TABLE - Stores donor-specific details and donations history
 CREATE TABLE donor_table (
-  donor_uid VARCHAR(10) PRIMARY KEY,
-  total_donation DECIMAL(10,2),
-  last_donation DATE,
-  total_income DECIMAL(10,2),
-  FOREIGN KEY (donor_uid) REFERENCES user_table(uid)
+    id INT(11) PRIMARY KEY,
+    user_id INT(11) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    total_donations INT(11) DEFAULT 0,
+    last_donation DATE,
+    address TEXT,
+    contact_number VARCHAR(20),
+    registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
 
+-- 4. RECIPIENT_TABLE - Stores recipient-specific details and received donations history
 CREATE TABLE recipient_table (
-  recipient_uid VARCHAR(10) PRIMARY KEY,
-  cause TEXT,
-  donation_goal INT,
-  last_received DATE,
-  FOREIGN KEY (recipient_uid) REFERENCES user_table(uid)
+    id INT(11) PRIMARY KEY,
+    user_id INT(11) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    received_help INT(11) DEFAULT 0,
+    last_received DATE,
+    address TEXT,
+    contact_number VARCHAR(20),
+    registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
 
+-- 5. SAVING_ACCOUNT - Stores saving account details for recipients
 CREATE TABLE saving_account (
-  recipient_uid VARCHAR(10),
+  recipient_uid INT(11),
   account_no VARCHAR(10) PRIMARY KEY,
   time_limit DATE,
   money DECIMAL(10,2),
-  FOREIGN KEY (recipient_uid) REFERENCES user_table(uid)
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(id)
 );
 
+-- 6. ORGANIZATION_TABLE - Stores organization details for donations
 CREATE TABLE organization_table (
   org_bin INT PRIMARY KEY,
   name VARCHAR(255),
@@ -55,33 +66,37 @@ CREATE TABLE organization_table (
   account VARCHAR(10)
 );
 
+-- 7. TOTAL_DONATIONS - Stores total donation records
 CREATE TABLE total_donations (
-  donor_id VARCHAR(10),
+  donor_id INT(11),
   donation_no INT PRIMARY KEY,
   donations_amount DECIMAL(10,2),
   donation_date DATE,
   confirmation BOOLEAN,
-  FOREIGN KEY (donor_id) REFERENCES donor_table(donor_uid)
+  FOREIGN KEY (donor_id) REFERENCES donor_table(id)
 );
 
+-- 8. RECEIVES - Stores details about the recipient receiving the donation
 CREATE TABLE receives (
   donation_no INT,
-  recipient_uid VARCHAR(10),
+  recipient_uid INT(11),
   org_bin INT,
   donation_date DATE,
   donation_amount DECIMAL(10,2),
   PRIMARY KEY (donation_no, recipient_uid, org_bin),
   FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no),
-  FOREIGN KEY (recipient_uid) REFERENCES user_table(uid),
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(id),
   FOREIGN KEY (org_bin) REFERENCES organization_table(org_bin)
 );
 
+-- 9. FINANCIAL_DONATIONS - Stores records of financial donations made
 CREATE TABLE financial_donations (
   donation_no INT PRIMARY KEY,
   money_amount DECIMAL(10,2),
   FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
 );
 
+-- 10. ESSENTIAL_NEEDS - Stores records of essential items donated
 CREATE TABLE essential_needs (
   donation_no INT PRIMARY KEY,
   item_name VARCHAR(255),
@@ -89,17 +104,19 @@ CREATE TABLE essential_needs (
   FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
 );
 
+-- 11. JAKAT_DONATION - Stores records of Jakat donations made
 CREATE TABLE jakat_donation (
   donation_no INT PRIMARY KEY,
   jakat_amount DECIMAL(10,2),
   FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
 );
 
+-- 12. FEEDBACK_TABLE - Stores user feedback and reviews
 CREATE TABLE feedback_table (
-  uid VARCHAR(10),
+  uid INT(11),
   review TEXT,
   posting_date DATE,
   PRIMARY KEY (uid, posting_date),
-  FOREIGN KEY (uid) REFERENCES user_table(uid)
+  FOREIGN KEY (uid) REFERENCES user_table(id)
 );
 
