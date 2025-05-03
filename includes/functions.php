@@ -1,7 +1,6 @@
 <?php
 // Function to display alert messages
-function displayAlert()
-{
+function displayAlert() {
     if (isset($_SESSION['message'])) {
         $type = $_SESSION['message_type'] ?? 'info';
         echo "<div class='alert alert-$type alert-dismissible fade show'>";
@@ -14,8 +13,7 @@ function displayAlert()
 }
 
 // Function to get user type
-function getUserType($user_id)
-{
+function getUserType($user_id) {
     global $conn;
     $sql = "SELECT user_type FROM User_table WHERE UID = $user_id";
     $result = $conn->query($sql);
@@ -23,8 +21,7 @@ function getUserType($user_id)
 }
 
 // Function to get donor details
-function getDonorDetails($donor_id)
-{
+function getDonorDetails($donor_id) {
     global $conn;
     $sql = "SELECT u.*, d.Total_donation, d.Last_donation, d.Total_income 
             FROM User_table u 
@@ -34,8 +31,7 @@ function getDonorDetails($donor_id)
 }
 
 // Function to get recipient details
-function getRecipientDetails($recipient_id)
-{
+function getRecipientDetails($recipient_id) {
     global $conn;
     $sql = "SELECT u.*, r.Recipient_income, r.Last_received, a.Account_no, a.Money
             FROM User_table u 
@@ -44,3 +40,4 @@ function getRecipientDetails($recipient_id)
             WHERE u.UID = $recipient_id";
     return $conn->query($sql)->fetch_assoc();
 }
+?>

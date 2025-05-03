@@ -4,20 +4,17 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shahajjo - Donation System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         .hero-section {
             background-color: #f8f9fa;
             padding: 4rem 0;
             margin-bottom: 2rem;
         }
-
         footer {
             background-color: #343a40;
             color: white;
@@ -26,7 +23,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         }
     </style>
 </head>
-
 <body>
     <!-- Simplified Header without login/register -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
@@ -65,6 +61,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

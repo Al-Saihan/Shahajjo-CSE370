@@ -1,5 +1,6 @@
-CREATE DATABASE cb_shahajjo_db;
-USE cb_shahajjo_db;
+DROP DATABASE shahajjo_db;
+CREATE DATABASE shahajjo_db;
+USE shahajjo_db;
 
 CREATE TABLE user_table (
     id INT(11) PRIMARY KEY AUTO_INCREMENT,

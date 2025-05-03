@@ -20,7 +20,6 @@ if ($registration_success) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <title>Register | Shahajjo</title>
@@ -31,14 +30,12 @@ if ($registration_success) {
             margin: 0 auto;
             padding: 2rem;
         }
-
         .auth-container {
             background: white;
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
-
         .role-selection {
             margin: 1.5rem 0;
             padding: 1rem;
@@ -47,7 +44,6 @@ if ($registration_success) {
         }
     </style>
 </head>
-
 <body>
     <div class="auth-wrapper">
         <div class="auth-container">
@@ -66,12 +62,12 @@ if ($registration_success) {
             <?php endif; ?>
 
             <h2 class="text-center mb-4">Create an Account</h2>
-
+            
             <form action="process_register.php" method="POST" onsubmit="return validateForm()">
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label for="first_name" class="form-label">First Name</label>
-                        <input type="text" class="form-control" id="first_name" name="first_name"
+                        <input type="text" class="form-control" id="first_name" name="first_name" 
                             value="<?= htmlspecialchars($form_data['first_name'] ?? '') ?>" required>
                     </div>
                     <div class="col-md-4">
@@ -101,7 +97,7 @@ if ($registration_success) {
                 <div class="role-selection mb-4">
                     <label class="form-label"><strong>Register As:</strong></label>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="user_type" id="donor" value="donor"
+                        <input class="form-check-input" type="radio" name="user_type" id="donor" value="donor" 
                             <?= ($form_data['user_type'] ?? 'donor') === 'donor' ? 'checked' : '' ?>>
                         <label class="form-check-label" for="donor">Donor (I want to help others)</label>
                     </div>
@@ -127,15 +123,14 @@ if ($registration_success) {
     </div>
 
     <script>
-        function validateForm() {
-            const password = document.getElementById('password').value;
-            if (password.length < 8) {
-                alert('Password must be at least 8 characters');
-                return false;
-            }
-            return true;
+    function validateForm() {
+        const password = document.getElementById('password').value;
+        if (password.length < 8) {
+            alert('Password must be at least 8 characters');
+            return false;
         }
+        return true;
+    }
     </script>
 </body>
-
 </html>

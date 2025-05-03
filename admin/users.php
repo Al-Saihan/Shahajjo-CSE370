@@ -1,4 +1,4 @@
-<?php
+<?php 
 include '../../includes/header.php';
 requireAdmin();
 
@@ -39,20 +39,20 @@ if (isset($_GET['delete'])) {
                     <?php
                     $sql = "SELECT * FROM User_table ORDER BY Reg_date DESC";
                     $result = $conn->query($sql);
-
+                    
                     if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
+                        while($row = $result->fetch_assoc()) {
                             echo '<tr>
-                                    <td>' . $row['UID'] . '</td>
-                                    <td>' . $row['F_name'] . ' ' . $row['L_Name'] . '</td>
-                                    <td>' . $row['email'] . '</td>
-                                    <td><span class="badge bg-primary">' . ucfirst($row['user_type']) . '</span></td>
-                                    <td>' . date('M d, Y', strtotime($row['Reg_date'])) . '</td>
+                                    <td>'.$row['UID'].'</td>
+                                    <td>'.$row['F_name'].' '.$row['L_Name'].'</td>
+                                    <td>'.$row['email'].'</td>
+                                    <td><span class="badge bg-primary">'.ucfirst($row['user_type']).'</span></td>
+                                    <td>'.date('M d, Y', strtotime($row['Reg_date'])).'</td>
                                     <td>
-                                        <a href="edit_user.php?id=' . $row['UID'] . '" class="btn btn-sm btn-warning">
+                                        <a href="edit_user.php?id='.$row['UID'].'" class="btn btn-sm btn-warning">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button onclick="confirmDelete(' . $row['UID'] . ')" class="btn btn-sm btn-danger">
+                                        <button onclick="confirmDelete('.$row['UID'].')" class="btn btn-sm btn-danger">
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </td>
@@ -69,11 +69,11 @@ if (isset($_GET['delete'])) {
 </div>
 
 <script>
-    function confirmDelete(userId) {
-        if (confirm("Are you sure you want to delete this user?")) {
-            window.location.href = 'users.php?delete=' + userId;
-        }
+function confirmDelete(userId) {
+    if (confirm("Are you sure you want to delete this user?")) {
+        window.location.href = 'users.php?delete=' + userId;
     }
+}
 </script>
 
 <?php include '../../includes/footer.php'; ?>
