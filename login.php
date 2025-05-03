@@ -1,71 +1,84 @@
 <?php
 require_once 'includes/config.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $email = sanitize($_POST['email']);
-    $password = sanitize($_POST['password']);
-
-    $stmt = $conn->prepare("SELECT UID, F_name, L_Name, Password, user_type FROM User_table WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $user = $stmt->get_result()->fetch_assoc();
-
-    if ($user && password_verify($password, $user['Password'])) {
-        $_SESSION['user_id'] = $user['UID'];
-        $_SESSION['f_name'] = $user['F_name'];
-        $_SESSION['l_name'] = $user['L_Name'];
-        $_SESSION['user_type'] = $user['user_type'];
-        
-        header("Location: dashboard.php");
-        exit();
-    } else {
-        $_SESSION['error'] = "Invalid email or password";
-    }
-}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Same head as index.php -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Shahajjo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .auth-container {
+            max-width: 500px;
+            margin: 5rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .auth-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .auth-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+        .auth-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+        .form-control {
+            padding: 0.75rem;
+            margin-bottom: 1.25rem;
+        }
+        .btn-auth {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+        }
+        .auth-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-            <a class="navbar-brand" href="index.php">Shahajjo</a>
-        </div>
-    </nav>
-
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow">
-                    <div class="card-body">
-                        <h2 class="text-center mb-4">Login</h2>
-                        <?php if(isset($_SESSION['error'])): ?>
-                            <div class="alert alert-danger"><?= $_SESSION['error']; unset($_SESSION['error']); ?></div>
-                        <?php endif; ?>
-                        <form method="post" action="process_login.php">
-                            <div class="mb-3">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control" name="email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Password</label>
-                                <input type="password" class="form-control" name="password" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">Login</button>
-                        </form>
-                        <div class="mt-3 text-center">
-                            Don't have an account? <a href="register.php">Register here</a>
-                        </div>
-                    </div>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-logo">Shahajjo</div>
+                <h2 class="auth-title">Login</h2>
+            </div>
+            
+            <form action="process_login.php" method="POST">
+                <input type="email" class="form-control" name="email" placeholder="Email" required>
+                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                
+                <div class="forgot-password">
+                    <a href="forgot_password.php">Forgot Password?</a>
                 </div>
+                
+                <button type="submit" class="btn btn-primary btn-auth">Login</button>
+            </form>
+            
+            <div class="auth-footer">
+                <p>Don't have an account? <a href="register.php">Register here</a></p>
             </div>
         </div>
     </div>
 
-    <!-- Same footer as index.php -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,25 +1,17 @@
 <?php
-require_once __DIR__ . '/paths.php';
+$host = 'localhost';
+$dbname = 'shahajjo_db';
+$username = 'root';
+$password = '';
 
-// Database configuration
-$host = "localhost";
-$user = "root";
-$password = "";
-$database = "shahajjo_db";
-
-// Create connection
-$conn = new mysqli($host, $user, $password, $database);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo "Database connected successfully!"; // Add this line temporarily
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
 }
 
-// Sanitization function
-if (!function_exists('sanitize')) {
-    function sanitize($data) {
-        global $conn;
-        return htmlspecialchars(mysqli_real_escape_string($conn, trim($data)));
-    }
-}
-?>
+// Error reporting for development
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
