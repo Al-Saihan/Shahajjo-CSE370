@@ -1,3 +1,5 @@
+CREATE DATABASE shahajjo_db;
+
 CREATE TABLE Admin_table (
   Admin_ID VARCHAR(10) PRIMARY KEY,
   Admin_pass VARCHAR(255),
