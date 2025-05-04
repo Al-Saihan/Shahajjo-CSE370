@@ -4,7 +4,7 @@ USE shahajjo_db;
 
 -- 1. ADMIN_TABLE - Stores admin credentials and access levels
 CREATE TABLE admin_table (
-  admin_id VARCHAR(10) PRIMARY KEY,
+  admin_id VARCHAR(10) PRIMARY KEY AUTO_INCREMENT,
   admin_pass VARCHAR(255),
   access_level VARCHAR(50)
 );
