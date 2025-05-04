@@ -214,7 +214,7 @@ try {
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <script>
+        <!-- <script>
             $(document).ready(function() {
                 // Make rows clickable to toggle details
                 $('tr[data-toggle="collapse"]').click(function() {
@@ -226,7 +226,41 @@ try {
                     e.stopPropagation();
                 });
             });
-        </script>
+        </script> -->
+        
+<!-- // fixing the toggle issue with dropdowns -->
+
+        <script>
+    $(document).ready(function () {
+        // Toggle detail rows
+        $('tr[data-toggle="collapse"]').click(function () {
+            $(this).next('tr').find('.collapse').collapse('toggle');
+        });
+
+        // Prevent dropdown button from collapsing detail row
+        $('.btn').click(function (e) {
+            e.stopPropagation();
+        });
+
+        // Close other dropdowns when one is opened
+        $('.dropdown-toggle').on('click', function (e) {
+            e.stopPropagation(); // Prevent event bubbling to document
+
+            // Close any other open dropdowns
+            $('.dropdown-menu.show').removeClass('show');
+
+            // Toggle this one
+            var $menu = $(this).next('.dropdown-menu');
+            $menu.toggleClass('show');
+        });
+
+        // Close all dropdowns if clicked outside
+        $(document).on('click', function () {
+            $('.dropdown-menu.show').removeClass('show');
+        });
+    });
+</script>
+
 </body>
 
 </html>
