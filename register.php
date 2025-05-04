@@ -51,19 +51,12 @@ if ($registration_success) {
 <body>
     <div class="auth-wrapper">
         <div class="auth-container">
-            <?php if ($registration_success): ?>
-                <div class="alert alert-success">
-                    Registration successful! Please login.
-                </div>
-            <?php endif; ?>
 
-            <?php if (!empty($errors)): ?>
-                <div class="alert alert-danger">
-                    <?php foreach ($errors as $error): ?>
-                        <p class="mb-1"><?= htmlspecialchars($error) ?></p>
-                    <?php endforeach; ?>
+            <div class="auth-header">
+                <div class="auth-logo text-center">
+                    <a href="index.php" style="text-decoration: none; font-weight: bold; color: #0d6efd; font-size: 2.5rem; transition: color 0.3s;" onmouseover="this.style.color='#0e5ed6';" onmouseout="this.style.color='#0d6efd';">Shahajjo</a>
                 </div>
-            <?php endif; ?>
+            </div>
 
             <h2 class="text-center mb-4">Create an Account</h2>
 
@@ -112,6 +105,22 @@ if ($registration_success) {
                     </div>
 
                 </div>
+
+                <!-- THROW ERROR MESSAGE HERE -->
+                <?php if ($registration_success): ?>
+                    <div class="alert alert-success">
+                        Registration successful! Please login.
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($errors)): ?>
+                    <div class="alert alert-danger">
+                        <?php foreach ($errors as $error): ?>
+                            <p class="mb-1"><?= htmlspecialchars($error) ?></p>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <!-- ERROR MESSAGE ENDS HERE -->
 
                 <button type="submit" class="btn btn-primary w-100">Register</button>
             </form>

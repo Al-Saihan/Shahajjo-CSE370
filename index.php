@@ -4,6 +4,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +16,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             padding: 4rem 0;
             margin-bottom: 2rem;
         }
+
         footer {
             background-color: #343a40;
             color: white;
@@ -23,12 +25,12 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         }
     </style>
 </head>
+
 <body>
     <!-- Simplified Header without login/register -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="index.php">Shahajjo</a>
-            <!-- Removed the login/register links from here -->
+            <a class="navbar-brand fw-bold" href="index.php" style="font-size: 1.5rem; letter-spacing: 2px;">Shahajjo</a>
         </div>
     </nav>
 
@@ -63,4 +65,5 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
