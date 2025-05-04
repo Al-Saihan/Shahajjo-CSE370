@@ -37,7 +37,7 @@ try {
 
     if (!$user || !password_verify($password, $user['password'])) {
         $_SESSION['login_error'] = "Invalid email or password";
-        header("Location: login.php"); 
+        header("Location: login.php");
         exit();
     }
 
@@ -56,13 +56,12 @@ try {
             header("Location: recipient/profile.php");
             break;
         case 'donor':
-        //default:
+            //default:
             header("Location: donor/profile.php");
             echo "hoise donor";
             break;
     }
     exit();
-
 } catch (PDOException $e) {
     $_SESSION['login_error'] = "Login failed. Please try again.";
     error_log("Login error: " . $e->getMessage());
