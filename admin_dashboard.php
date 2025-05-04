@@ -103,7 +103,7 @@ try {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container">
-            <a class="navbar-brand" href="#">Shahajjo Admin Dashboard</a>
+            <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="index.php">Shahajjo</a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
                     Admin ID: <?= $_SESSION['user_id'] ?>
