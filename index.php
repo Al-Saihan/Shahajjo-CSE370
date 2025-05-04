@@ -30,7 +30,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     <!-- Simplified Header without login/register -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="index.php" style="font-size: 1.5rem; letter-spacing: 2px;">Shahajjo</a>
+            <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="index.php" style="font-size: 1.5rem; letter-spacing: 2px;">Shahajjo</a>
         </div>
     </nav>
 

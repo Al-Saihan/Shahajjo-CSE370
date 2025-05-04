@@ -1,6 +1,9 @@
 <?php
 require_once 'includes/config.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
+
+$errors = isset($_SESSION['login_error']) ? (array)$_SESSION['login_error'] : [];
+unset($_SESSION['login_error']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,13 +74,19 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <div class="auth-logo"><a href="index.php" style="text-decoration: none; color: #0d6efd; transition: color 0.3s;" onmouseover="this.style.color='#0e5ed6';" onmouseout="this.style.color='#0d6efd';">Shahajjo</a></div>
                 <h2 class="auth-title">Login</h2>
             </div>
-
+            <?php if (!empty($errors)): ?>
+                <div class="alert alert-danger">
+                    <?php foreach ($errors as $error): ?>
+                        <p class="mb-1"><?= htmlspecialchars($error) ?></p>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
             <form action="process_login.php" method="POST">
-                <input type="email" class="form-control" name="email" placeholder="Email" required>
-                <input type="password" class="form-control" name="password" placeholder="Password" required>
+                <input type="email" class="form-control" name="email" placeholder="Email">
+                <input type="password" class="form-control" name="password" placeholder="Password">
 
                 <div class="forgot-password">
-                    <a href="forgot_password.php">Forgot Password?</a>
+                    <a href="changepass.php">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-auth">Login</button>

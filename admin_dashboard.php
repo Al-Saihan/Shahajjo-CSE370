@@ -103,7 +103,7 @@ try {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container">
-            <a class="navbar-brand" href="#">Shahajjo Admin Dashboard</a>
+            <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="index.php">Shahajjo</a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
                     Admin ID: <?= $_SESSION['user_id'] ?>
@@ -118,14 +118,14 @@ try {
         <div class="table-container"> <!-- Added table-container class -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Type</th>
-                        <th>Role</th>
-                        <th>Joined</th>
-                        <th>Actions</th>
+                    <tr class="table-dark">
+                        <th style="border: 1px solid #dee2e6;">ID</th>
+                        <th style="border: 1px solid #dee2e6;">Name</th>
+                        <th style="border: 1px solid #dee2e6;">Email</th>
+                        <th style="border: 1px solid #dee2e6;">Type</th>
+                        <th style="border: 1px solid #dee2e6;">Role</th>
+                        <th style="border: 1px solid #dee2e6;">Joined</th>
+                        <th style="border: 1px solid #dee2e6;">Actions</th>
                     </tr>
                     </thead>
                     <tbody>
