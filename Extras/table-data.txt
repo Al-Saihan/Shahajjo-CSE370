@@ -4,9 +4,9 @@ USE shahajjo_db;
 
 -- 1. ADMIN_TABLE - Stores admin credentials and access levels
 CREATE TABLE admin_table (
-  admin_id VARCHAR(10) PRIMARY KEY AUTO_INCREMENT,
-  admin_pass VARCHAR(255),
-  access_level VARCHAR(50)
+  admin_id INT(11) PRIMARY KEY AUTO_INCREMENT,
+  admin_name VARCHAR(255),
+  access_level ENUM('super_admin', 'moderator') NOT NULL DEFAULT 'moderator'
 );
 
 -- 2. USER_TABLE - Stores user information with roles and statuses
@@ -121,3 +121,11 @@ CREATE TABLE feedback_table (
   FOREIGN KEY (uid) REFERENCES user_table(id)
 );
 
+-- 13. Creating REL between User and Admin
+ALTER TABLE user_table
+ADD COLUMN admin_id INT(11) NULL,
+ADD FOREIGN KEY (admin_id) REFERENCES admin_table(admin_id);
+
+-- 14. ADD MAIN SUPER_ADMIN
+INSERT INTO `admin_table`(`admin_id`, `admin_name`, `access_level`) VALUES ('1','PIEU','super_admin');
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `user_type`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES ('1', 'Muhtasim', 'Al', 'Sakib', 'admin@gmail.com', '$2y$10$80bXmzydkJZkf9ElLIVapOSesOt.Y3EOi61m/aZpHpH8eMeEw4VFy', 'donor', 'admin', 'active', '0', current_timestamp(), '1');

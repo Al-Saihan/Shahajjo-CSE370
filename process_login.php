@@ -33,11 +33,11 @@ try {
     // Check user exists
     $stmt = $pdo->prepare("SELECT * FROM user_table WHERE email = ?");
     $stmt->execute([$email]);
-    $user = $stmt->fetch();
+    $user = $stmt->fetch(); // returns the entire user row i think
 
     if (!$user || !password_verify($password, $user['password'])) {
         $_SESSION['login_error'] = "Invalid email or password";
-        header("Location: login.php");
+        header("Location: login.php"); 
         exit();
     }
 

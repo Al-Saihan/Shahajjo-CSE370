@@ -29,14 +29,14 @@ $last_name = trim($_POST['last_name'] ?? '');
 $email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 $user_type = $_POST['user_type'] ?? 'donor';
-echo '' . $first_name . '' . $middle_name . '' . $last_name . '' . $email . '';
+echo '' . $first_name . '' . $middle_name . '' . $last_name . '' . $email . '' . $password . '' . $user_type;
 // Validate inputs
 $errors = [];
 if (empty($first_name)) $errors[] = "First name is required";
 if (empty($last_name)) $errors[] = "Last name is required";
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) $errors[] = "Please enter a valid email address";
 if (strlen($password) < 8) $errors[] = "Password must be at least 8 characters";
-if (!in_array($user_type, ['donor', 'recipient', 'admin'])) {
+if (!in_array($user_type, ['donor', 'recipient'])) {
     $errors[] = "Invalid user type selected";
 }
 
@@ -75,14 +75,7 @@ try {
         VALUES (?, ?, ?, ?, ?, ?, ?)
     ");
 
-    $role = null;
-
-    if ($user_type === "admin") {
-        $user_type = NULL;
-        $role = "admin";
-    } else {
-        $role = $user_type;
-    }
+    $role = $user_type;
 
     $stmt->execute([
         $first_name,
@@ -90,11 +83,11 @@ try {
         $last_name,
         $email,
         $password_hash,
-        $user_type, // DONOR, RECIPIENT, or NULL for admin
-        $role // DONOR, RECIPIENT, or ADMIN
+        $user_type, // DONOR, RECIPIENT
+        $role // DONOR, RECIPIENT
     ]);
 
-    // //
+    // ! --------------------
     $user_id = $pdo->lastInsertId();
 
     // Insert into specific table
@@ -102,14 +95,11 @@ try {
         $stmt = $pdo->prepare("INSERT INTO donor_table (user_id) VALUES (?)");
     } elseif ($user_type == 'recipient') {
         $stmt = $pdo->prepare("INSERT INTO recipient_table (user_id) VALUES (?)");
-    } else {
-        // TODO: THIS THING DOESNT FUCKING WORK, WILL FIX TOMORROW. TQ BYE BYE. ( DONT REGISTER AS ADMIN FOR NOW)
-        // $stmt = $pdo->prepare("INSERT INTO admin_table (access_level) VALUES (?)");
     }
-    // ! DONT REGISTER AS ADMIN FOR NOW (2) 
-    $stmt->execute([$user_id]);
 
-    // //
+    $stmt->execute([$user_id]);
+    // ! --------------------
+
     $pdo->commit();
 
     // Clear session data
@@ -140,3 +130,4 @@ function sendResponse($status, $success, $message, $data = null)
     ]);
     exit;
 }
+// Run this in a PHP file or interactive shell

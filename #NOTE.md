@@ -1,8 +1,7 @@
 # TO-DO
 
-1. Fix The Database, Add Database Copy-Paste File
-2. Commit, the formatted files
-3.
+1. Add Donations Page
+2. Add About Us Page
 
 # Who is working on what:
 
