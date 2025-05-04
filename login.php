@@ -77,7 +77,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <input type="password" class="form-control" name="password" placeholder="Password" required>
 
                 <div class="forgot-password">
-                    <a href="forgot_password.php">Forgot Password?</a>
+                    <a href="changepass.php">Forgot Password?</a>
                 </div>
 
                 <button type="submit" class="btn btn-primary btn-auth">Login</button>
