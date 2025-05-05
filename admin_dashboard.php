@@ -13,7 +13,7 @@ try {
     $stmt = $pdo->query("
         SELECT 
             u.id, u.first_name, u.middle_name, u.last_name, u.email,
-            u.user_type, u.role, u.created_at,
+            u.user_type, u.role, u.created_at, u.status,
             d.address AS donor_address, d.contact_number AS donor_contact,
             r.address AS recipient_address, r.contact_number AS recipient_contact
         FROM user_table u
@@ -122,7 +122,7 @@ try {
                         <th style="border: 1px solid #dee2e6;">ID</th>
                         <th style="border: 1px solid #dee2e6;">Name</th>
                         <th style="border: 1px solid #dee2e6;">Email</th>
-                        <th style="border: 1px solid #dee2e6;">Type</th>
+                        <th style="border: 1px solid #dee2e6;">Status</th>
                         <th style="border: 1px solid #dee2e6;">Role</th>
                         <th style="border: 1px solid #dee2e6;">Joined</th>
                         <th style="border: 1px solid #dee2e6;">Actions</th>
@@ -140,11 +140,8 @@ try {
                                 </td>
                                 <td><?= htmlspecialchars($user['email']) ?></td>
                                 <td>
-                                    <span class="badge <?=
-                                                        $user['user_type'] === 'donor' ? 'badge-donor' : 'badge-recipient'
-                                                        ?>">
-                                        <?= ucfirst($user['user_type']) ?>
-                                    </span>
+                                    <!-- STATUS_HERE -->
+                                    <?= htmlspecialchars($user['status']) ?>
                                 </td>
                                 <td>
                                     <span class="badge <?=
