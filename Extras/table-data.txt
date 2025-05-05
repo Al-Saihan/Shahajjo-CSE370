@@ -19,7 +19,7 @@ CREATE TABLE user_table (
     password VARCHAR(255) NOT NULL,
     user_type ENUM('donor', 'recipient') DEFAULT NULL,
     role ENUM('donor', 'recipient', 'admin') NOT NULL DEFAULT 'donor',
-    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    status ENUM('active', 'inactive', 'blacklisted') NOT NULL DEFAULT 'inactive',
     profile_complete TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
