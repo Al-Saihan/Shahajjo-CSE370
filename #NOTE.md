@@ -5,11 +5,11 @@
 
 # Who is working on what:
 
-- Sakib:
+- Sakib: 
 
-- Faiyaz:
+- Faiyaz: sexo
 
-- Saihan:
+- Saihan: 
 
 # Ignore Files:
 
