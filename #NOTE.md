@@ -5,7 +5,11 @@
 
 # Who is working on what:
 
+<<<<<<< HEAD
 - Sakib:
+=======
+- Sakib: 
+>>>>>>> cbefdc09c41f6d44d58425263dfe55f132459277
 
 - Faiyaz: 
 
