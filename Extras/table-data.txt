@@ -41,10 +41,11 @@ CREATE TABLE recipient_table (
     id INT(11) PRIMARY KEY AUTO_INCREMENT,
     user_id INT(11) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    received_help INT(11) DEFAULT 0,
+    wallet FLOAT(10,2) DEFAULT 0.00,
     last_received DATE,
     address TEXT,
     contact_number VARCHAR(20),
+    cause TEXT,
     registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
