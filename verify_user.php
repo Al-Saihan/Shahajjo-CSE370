@@ -47,7 +47,7 @@ if (!$user) {
     die("User not found.");
 }
 // Toggle the user's status
-$new_status = ($user['status'] === 'blacklisted') ? 'unverified' : 'blacklisted';
+$new_status = ($user['status'] === 'verified') ? 'unverified' : 'verified';
 
 try {
     $stmt = $pdo->prepare("

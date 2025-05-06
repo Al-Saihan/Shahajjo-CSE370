@@ -54,15 +54,30 @@ try {
         }
 
         .badge-admin {
-            background-color: #dc3545;
+            background-color: #000000;
+            color: white;
+            font-weight: bold;
         }
 
         .badge-donor {
-            background-color: #28a745;
+            background-color: #2848a7;
         }
 
         .badge-recipient {
-            background-color: #17a2b8;
+            background-color: #f878d4;
+        }
+
+        .badge-unverified {
+            background-color: #dc3545;
+        }
+
+        .badge-verified {
+            background-color: #28a745;
+        }
+
+        .badge-blacklisted {
+            background-color: #202020;
+            color: white;
         }
 
         .table-hover tbody tr:hover {
@@ -117,7 +132,7 @@ try {
         <h2 class="mb-4">User Management</h2>
         <div class="table-container"> <!-- Added table-container class -->
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-striped table-hover text-center">
                     <tr class="table-dark">
                         <th style="border: 1px solid #dee2e6;">ID</th>
                         <th style="border: 1px solid #dee2e6;">Name</th>
@@ -140,8 +155,11 @@ try {
                                 </td>
                                 <td><?= htmlspecialchars($user['email']) ?></td>
                                 <td>
-                                    <!-- STATUS_HERE -->
-                                    <?= htmlspecialchars($user['status']) ?>
+                                    <!-- <?= htmlspecialchars($user['status']) ?> -->
+                                    <span class="badge <?=
+                                                        $user['status'] === 'unverified' ? 'badge-unverified' : ($user['status'] === 'verified' ? 'badge-verified' : 'badge-blacklisted')
+                                                        ?>">
+                                        <?= ucfirst($user['status']) ?>
                                 </td>
                                 <td>
                                     <span class="badge <?=
@@ -152,13 +170,32 @@ try {
                                 </td>
                                 <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
                                 <td>
-                                    <div class="dropdown">
+                                    <div>
                                         <button class="btn btn-sm btn-warning dropdown-toggle border border-dark" type="button" id="manageDropdown<?= $user['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             Manage
                                         </button>
                                         <ul class="dropdown-menu bg-dark text-white" aria-labelledby="manageDropdown<?= $user['id'] ?>">
-                                            <li><a class="dropdown-item text-white bg-dark border-bottom border-secondary" href="verify_user.php?id=<?= $user['id'] ?>">Verify User</a></li>
-                                            <li><a class="dropdown-item text-white bg-dark border-bottom border-secondary" href="blacklist_user.php?id=<?= $user['id'] ?>">Blacklist User</a></li>
+                                            <li>
+                                                <form action="verify_user.php" method="POST" style="margin: 0;">
+                                                    <?php if ($user['role'] === 'admin'): ?>
+                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Admin cannot be Unverified</div>
+                                                    <?php else: ?>
+                                                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                                        <button type="submit" class="dropdown-item text-white bg-dark border-bottom border-secondary">Verify User</button>
+                                                    <?php endif; ?>
+
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <form action="blacklist_user.php" method="POST" style="margin: 0;">
+                                                    <?php if ($user['role'] === 'admin'): ?>
+                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Admin cannot be Blacklisted</div>
+                                                    <?php else: ?>
+                                                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                                        <button type="submit" class="dropdown-item text-white bg-dark border-bottom border-secondary">Blacklist User</button>
+                                                    <?php endif; ?>
+                                                </form>
+                                            </li>
                                             <li><a class="dropdown-item text-white bg-dark" href="change_role.php?id=<?= $user['id'] ?>">Change Role</a></li>
                                         </ul>
                                     </div>
@@ -182,20 +219,19 @@ try {
                                                     <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
                                                 </div>
                                                 <div class="col-md-6">
+                                                    <h5>Contact Information</h5>
                                                     <?php if ($user['user_type'] === 'donor'): ?>
-                                                        <h5>Donor Information</h5>
                                                         <div class="address-box">
                                                             <p><strong>Address:</strong></p>
                                                             <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
                                                         </div>
-                                                        <p><strong>Contact Number:</strong> <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
+                                                        <p><strong>Phone Number:</strong> <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
                                                     <?php elseif ($user['user_type'] === 'recipient'): ?>
-                                                        <h5>Recipient Information</h5>
                                                         <div class="address-box">
                                                             <p><strong>Address:</strong></p>
                                                             <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
                                                         </div>
-                                                        <p><strong>Contact Number:</strong> <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
+                                                        <p><strong>Phone Number:</strong> <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
@@ -224,39 +260,39 @@ try {
                 });
             });
         </script> -->
-        
-<!-- // fixing the toggle issue with dropdowns -->
+
+        <!-- // fixing the toggle issue with dropdowns -->
 
         <script>
-    $(document).ready(function () {
-        // Toggle detail rows
-        $('tr[data-toggle="collapse"]').click(function () {
-            $(this).next('tr').find('.collapse').collapse('toggle');
-        });
+            $(document).ready(function() {
+                // Toggle detail rows
+                $('tr[data-toggle="collapse"]').click(function() {
+                    $(this).next('tr').find('.collapse').collapse('toggle');
+                });
 
-        // Prevent dropdown button from collapsing detail row
-        $('.btn').click(function (e) {
-            e.stopPropagation();
-        });
+                // Prevent dropdown button from collapsing detail row
+                $('.btn').click(function(e) {
+                    e.stopPropagation();
+                });
 
-        // Close other dropdowns when one is opened
-        $('.dropdown-toggle').on('click', function (e) {
-            e.stopPropagation(); // Prevent event bubbling to document
+                // Close other dropdowns when one is opened
+                $('.dropdown-toggle').on('click', function(e) {
+                    e.stopPropagation(); // Prevent event bubbling to document
 
-            // Close any other open dropdowns
-            $('.dropdown-menu.show').removeClass('show');
+                    // Close any other open dropdowns
+                    $('.dropdown-menu.show').removeClass('show');
 
-            // Toggle this one
-            var $menu = $(this).next('.dropdown-menu');
-            $menu.toggleClass('show');
-        });
+                    // Toggle this one
+                    var $menu = $(this).next('.dropdown-menu');
+                    $menu.toggleClass('show');
+                });
 
-        // Close all dropdowns if clicked outside
-        $(document).on('click', function () {
-            $('.dropdown-menu.show').removeClass('show');
-        });
-    });
-</script>
+                // Close all dropdowns if clicked outside
+                $(document).on('click', function() {
+                    $('.dropdown-menu.show').removeClass('show');
+                });
+            });
+        </script>
 
 </body>
 
