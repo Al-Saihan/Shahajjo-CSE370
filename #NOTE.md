@@ -5,7 +5,7 @@
 
 # Who is working on what:
 
-- Sakib: choto nunu
+- Sakib: 
 
 - Faiyaz: 
 
