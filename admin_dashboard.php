@@ -21,7 +21,7 @@ try {
         FROM user_table u
         LEFT JOIN donor_table d ON u.id = d.user_id
         LEFT JOIN recipient_table r ON u.id = r.user_id
-        ORDER BY u.created_at ASC
+        ORDER BY u.id ASC
     ");
     $users = $stmt->fetchAll();
 } catch (PDOException $e) {
