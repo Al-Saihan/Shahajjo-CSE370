@@ -128,4 +128,4 @@ ADD FOREIGN KEY (admin_id) REFERENCES admin_table(admin_id);
 
 -- 14. ADD MAIN SUPER_ADMIN
 INSERT INTO `admin_table`(`admin_id`, `admin_name`, `access_level`) VALUES ('1','PIEU','super_admin');
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `user_type`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES ('1', 'Naruto', 'Dattebayo', 'Uzumaki', 'admin@gmail.com', '$2y$10$80bXmzydkJZkf9ElLIVapOSesOt.Y3EOi61m/aZpHpH8eMeEw4VFy', 'donor', 'admin', 'verified', '0', current_timestamp(), '1');
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES ('1', 'Naruto', 'Dattebayo', 'Uzumaki', 'admin@gmail.com', '$2y$10$80bXmzydkJZkf9ElLIVapOSesOt.Y3EOi61m/aZpHpH8eMeEw4VFy', 'admin', 'verified', '0', current_timestamp(), '1');
