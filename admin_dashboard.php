@@ -8,12 +8,14 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
+$admin_id = $_SESSION['user_id'];
+
 // Get all users with complete details
 try {
     $stmt = $pdo->query("
         SELECT 
             u.id, u.first_name, u.middle_name, u.last_name, u.email,
-            u.user_type, u.role, u.created_at, u.status,
+            u.user_type, u.role, u.created_at, u.status, u.admin_id,
             d.address AS donor_address, d.contact_number AS donor_contact,
             r.address AS recipient_address, r.contact_number AS recipient_contact
         FROM user_table u
@@ -23,8 +25,23 @@ try {
     ");
     $users = $stmt->fetchAll();
 } catch (PDOException $e) {
-    die("Database error: " . $e->getMessage());
+    die("Database error 1: " . $e->getMessage());
 }
+
+// Get admin details for the currently logged-in admin
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            admin_id, access_level
+        FROM admin_table
+        WHERE admin_id = :admin_id
+    ");
+    $stmt->execute(['admin_id' => $admin_id]);
+    $admin = $stmt->fetch();
+} catch (PDOException $e) {
+    die("Database error 2: " . $e->getMessage());
+}
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -129,7 +146,12 @@ try {
     </nav>
 
     <div class="container my-5">
-        <h2 class="mb-4">User Management</h2>
+
+        <h2 class="mb-4 d-flex justify-content-between align-items-center">
+            User Management
+            <a href="add_admin.php" class="btn btn-danger btn-sm">Add Admin</a>
+        </h2>
+
         <div class="table-container"> <!-- Added table-container class -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover text-center">
@@ -171,24 +193,31 @@ try {
                                 <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
                                 <td>
                                     <div>
+                                        <!-- MANAGE BUTTON -->
                                         <button class="btn btn-sm btn-warning dropdown-toggle border border-dark" type="button" id="manageDropdown<?= $user['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             Manage
                                         </button>
                                         <ul class="dropdown-menu bg-dark text-white" aria-labelledby="manageDropdown<?= $user['id'] ?>">
+                                            <!-- CHANGE STATUS/VERIFICATION -->
                                             <li>
                                                 <form action="verify_user.php" method="POST" style="margin: 0;">
-                                                    <?php if ($user['role'] === 'admin'): ?>
+                                                    <?php if ($user['id'] === $admin_id): ?>
+                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot change your Status</div>
+                                                    <?php elseif ($user['role'] === 'admin'): ?>
                                                         <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Admin cannot be Unverified</div>
                                                     <?php else: ?>
                                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
                                                         <button type="submit" class="dropdown-item text-white bg-dark border-bottom border-secondary">Verify User</button>
                                                     <?php endif; ?>
-
                                                 </form>
                                             </li>
+
+                                            <!-- CHANGE BLACKLIST SECTION -->
                                             <li>
                                                 <form action="blacklist_user.php" method="POST" style="margin: 0;">
-                                                    <?php if ($user['role'] === 'admin'): ?>
+                                                    <?php if ($user['id'] === $admin_id): ?>
+                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot Blacklist yourself</div>
+                                                    <?php elseif ($user['role'] === 'admin'): ?>
                                                         <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Admin cannot be Blacklisted</div>
                                                     <?php else: ?>
                                                         <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
@@ -196,7 +225,21 @@ try {
                                                     <?php endif; ?>
                                                 </form>
                                             </li>
-                                            <li><a class="dropdown-item text-white bg-dark" href="change_role.php?id=<?= $user['id'] ?>">Change Role</a></li>
+
+                                            <!-- CHANGE ROLE SECTION -->
+                                            <li>
+                                                <form action="change_role.php" method="POST" style="margin: 0;">
+                                                    <?php if ($user['id'] === $admin_id): ?>
+                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot change your own Role</div>
+                                                        <!-- CHECK IF CURRENTE ADMIN IS SUPER ADMIN -->
+                                                    <?php elseif ($admin['access_level'] !== 'super_admin'): ?>
+                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Only Super Admin can change roles</div>
+                                                    <?php else: ?>
+                                                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
+                                                        <button type="submit" class="dropdown-item text-white bg-dark border-bottom border-secondary">Change Role</button>
+                                                    <?php endif; ?>
+                                                </form>
+                                            </li>
                                         </ul>
                                     </div>
                                 </td>
@@ -214,8 +257,7 @@ try {
                                                             $user['last_name']) ?>
                                                     </p>
                                                     <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
-                                                    <p><strong>Account Type:</strong> <?= ucfirst($user['user_type']) ?></p>
-                                                    <p><strong>Account Role:</strong> <?= ucfirst($user['role']) ?></p>
+                                                    <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
                                                     <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
                                                 </div>
                                                 <div class="col-md-6">
