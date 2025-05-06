@@ -5,9 +5,9 @@
 
 # Who is working on what:
 
-- Sakib: 
+- Sakib: choto nunu
 
-- Faiyaz: sexo
+- Faiyaz: 
 
 - Saihan: 
 
