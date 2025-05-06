@@ -15,7 +15,7 @@ try {
     $stmt = $pdo->query("
         SELECT 
             u.id, u.first_name, u.middle_name, u.last_name, u.email,
-            u.user_type, u.role, u.created_at, u.status, u.admin_id,
+            u.role, u.created_at, u.status, u.admin_id,
             d.address AS donor_address, d.contact_number AS donor_contact,
             r.address AS recipient_address, r.contact_number AS recipient_contact
         FROM user_table u
@@ -185,7 +185,7 @@ try {
                                 </td>
                                 <td>
                                     <span class="badge <?=
-                                                        $user['role'] === 'admin' ? 'badge-admin' : ($user['user_type'] === 'donor' ? 'badge-donor' : 'badge-recipient')
+                                                        $user['role'] === 'admin' ? 'badge-admin' : ($user['role'] === 'donor' ? 'badge-donor' : 'badge-recipient')
                                                         ?>">
                                         <?= ucfirst($user['role']) ?>
                                     </span>
@@ -262,13 +262,13 @@ try {
                                                 </div>
                                                 <div class="col-md-6">
                                                     <h5>Contact Information</h5>
-                                                    <?php if ($user['user_type'] === 'donor'): ?>
+                                                    <?php if ($user['role'] === 'donor'): ?>
                                                         <div class="address-box">
                                                             <p><strong>Address:</strong></p>
                                                             <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
                                                         </div>
                                                         <p><strong>Phone Number:</strong> <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
-                                                    <?php elseif ($user['user_type'] === 'recipient'): ?>
+                                                    <?php elseif ($user['role'] === 'recipient'): ?>
                                                         <div class="address-box">
                                                             <p><strong>Address:</strong></p>
                                                             <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>

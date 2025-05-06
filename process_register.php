@@ -71,8 +71,8 @@ try {
     // Insert into user_table
     $stmt = $pdo->prepare("
         INSERT INTO user_table 
-        (first_name, middle_name, last_name, email, password, user_type, role) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        (first_name, middle_name, last_name, email, password, role) 
+        VALUES (?, ?, ?, ?, ?, ?)
     ");
 
     $role = $user_type;
@@ -83,7 +83,6 @@ try {
         $last_name,
         $email,
         $password_hash,
-        $user_type, // DONOR, RECIPIENT
         $role // DONOR, RECIPIENT
     ]);
 
