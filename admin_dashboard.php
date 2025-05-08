@@ -8,20 +8,27 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit();
 }
 
-$admin_id = $_SESSION['user_id'];
+$admin_id = null;
+try {
+    $stmt = $pdo->prepare("SELECT admin_id FROM user_table WHERE id = :user_id");
+    $stmt->execute(['user_id' => $_SESSION['user_id']]);
+    $result = $stmt->fetch();
+    if ($result) {
+        $admin_id = $result['admin_id'];
+    } else {
+        die("Admin ID not found for the current user.");
+    }
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
 
 // Get all users with complete details
 try {
     $stmt = $pdo->query("
         SELECT 
-            u.id, u.first_name, u.middle_name, u.last_name, u.email,
-            u.role, u.created_at, u.status, u.admin_id,
-            d.address AS donor_address, d.contact_number AS donor_contact,
-            r.address AS recipient_address, r.contact_number AS recipient_contact
-        FROM user_table u
-        LEFT JOIN donor_table d ON u.id = d.user_id
-        LEFT JOIN recipient_table r ON u.id = r.user_id
-        ORDER BY u.id ASC
+        *
+        FROM
+        user_table
     ");
     $users = $stmt->fetchAll();
 } catch (PDOException $e) {
@@ -32,7 +39,7 @@ try {
 try {
     $stmt = $pdo->prepare("
         SELECT 
-            admin_id, access_level
+        *
         FROM admin_table
         WHERE admin_id = :admin_id
     ");
@@ -189,6 +196,32 @@ try {
                                                         ?>">
                                         <?= ucfirst($user['role']) ?>
                                     </span>
+                                    <br>
+                                    <span>
+                                        <?php if ($user['role'] === 'admin'): ?>
+                                            <?php
+                                            // Fetch admin_name for the current admin user
+                                            $admin_name = '';
+                                            try {
+                                                $stmt = $pdo->prepare("
+                                                    SELECT admin_table.admin_name 
+                                                    FROM user_table 
+                                                    INNER JOIN admin_table 
+                                                    ON user_table.admin_id = admin_table.admin_id 
+                                                    WHERE user_table.id = :user_id
+                                                ");
+                                                $stmt->execute(['user_id' => $user['id']]);
+                                                $result = $stmt->fetch();
+                                                if ($result) {
+                                                    $admin_name = $result['admin_name'];
+                                                }
+                                            } catch (PDOException $e) {
+                                                $admin_name = 'Error fetching name';
+                                            }
+                                            ?>
+                                            <span class="badge badge-admin"><?= htmlspecialchars($admin_name) ?></span>
+                                        <?php endif; ?>
+                                    </span>
                                 </td>
                                 <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
                                 <td>
@@ -251,29 +284,75 @@ try {
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <h5>Basic Information</h5>
-                                                    <p><strong>Full Name:</strong>
-                                                        <?= htmlspecialchars($user['first_name'] . ' ' .
-                                                            ($user['middle_name'] ? $user['middle_name'] . ' ' : '') .
-                                                            $user['last_name']) ?>
-                                                    </p>
-                                                    <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
-                                                    <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
-                                                    <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
+                                                    <div class="address-box">
+
+                                                        <p><strong>Full Name:</strong>
+                                                            <?= htmlspecialchars($user['first_name'] . ' ' .
+                                                                ($user['middle_name'] ? $user['middle_name'] . ' ' : '') .
+                                                                $user['last_name']) ?>
+                                                        </p>
+                                                        <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+                                                        <?php if ($user['role'] !== 'admin'): ?>
+                                                            <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
+                                                        <?php endif; ?>
+
+                                                        <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
+                                                    </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <h5>Contact Information</h5>
+
                                                     <?php if ($user['role'] === 'donor'): ?>
+                                                        <h5>Contact Information</h5>
+
                                                         <div class="address-box">
                                                             <p><strong>Address:</strong></p>
                                                             <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
                                                         </div>
-                                                        <p><strong>Phone Number:</strong> <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
+                                                        <div class="address-box">
+                                                            <p><strong>Phone Number:</strong></p>
+                                                            <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span>Not provided</span>' ?></p>
+                                                        </div>
+
                                                     <?php elseif ($user['role'] === 'recipient'): ?>
+                                                        <h5>Contact Information</h5>
+
                                                         <div class="address-box">
                                                             <p><strong>Address:</strong></p>
                                                             <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
                                                         </div>
-                                                        <p><strong>Phone Number:</strong> <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?></p>
+                                                        <div class="address-box">
+                                                            <p><strong>Phone Number:</strong></p>
+                                                            <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span>Not provided</span>' ?></p>
+                                                        </div>
+
+                                                    <?php else: ?>
+                                                        <h5>Administration Information</h5>
+
+                                                        <div class="address-box">
+                                                            <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
+                                                            <?php
+                                                            try {
+                                                                $stmt = $pdo->prepare("
+                                                                    SELECT admin_table.admin_id, admin_table.access_level
+                                                                    FROM user_table
+                                                                    INNER JOIN admin_table
+                                                                    ON user_table.admin_id = admin_table.admin_id
+                                                                    WHERE user_table.id = :user_id
+                                                                ");
+                                                                $stmt->execute(['user_id' => $user['id']]);
+                                                                $adminDetails = $stmt->fetch();
+                                                                if ($adminDetails) {
+                                                                    echo '<p><strong>Admin ID:</strong> ' . htmlspecialchars($adminDetails['admin_id']) . '</p>';
+                                                                    echo '<p><strong>Access Level:</strong> ' . htmlspecialchars(ucwords(str_replace('_', ' ', $adminDetails['access_level']))) . '</p>';
+                                                                } else {
+                                                                    echo '<p class="text-muted">Admin details not found</p>';
+                                                                }
+                                                            } catch (PDOException $e) {
+                                                                echo '<p class="text-danger">Error fetching admin details</p>';
+                                                            }
+                                                            ?>
+                                                        </div>
+
                                                     <?php endif; ?>
                                                 </div>
                                             </div>

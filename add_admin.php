@@ -60,7 +60,7 @@ if ($registration_success) {
 
             <h2 class="text-center mb-4">Register A New Admin</h2>
 
-            <form action="process_register.php" method="POST" onsubmit="return validateForm()">
+            <form action="process_admin_register.php" method="POST" onsubmit="return validateForm()">
                 <div class="row mb-3">
                     <div class="col-md-4">
                         <label for="first_name" class="form-label">First Name</label>
@@ -99,6 +99,23 @@ if ($registration_success) {
                 </div>
 
 
+
+                <div class="role-selection">
+                    <label class="form-label">Access Level</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="access" id="super_admin" value="super_admin" required>
+                        <label class="form-check-label" for="super_admin">
+                            Super Admin (Can Add New Admins & Manage Users)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="access" id="moderator" value="moderator" required>
+                        <label class="form-check-label" for="moderator">
+                            Moderator (Can Manage Users)
+                        </label>
+                    </div>
+                </div>
+
                 <!-- THROW ERROR MESSAGE HERE -->
                 <?php if ($registration_success): ?>
                     <div class="alert alert-success">
@@ -116,22 +133,7 @@ if ($registration_success) {
                 <!-- ERROR MESSAGE ENDS HERE -->
 
 
-                <div class="role-selection">
-                    <label class="form-label">Access Level</label>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="role" id="super_admin" value="Super Admin" required>
-                        <label class="form-check-label" for="super_admin">
-                            Super Admin (Can Add New Admins & Manage Users)
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="radio" name="role" id="moderator" value="Moderator" required>
-                        <label class="form-check-label" for="moderator">
-                            Moderator (Can Manage Users)
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-danger w-100">Add Admin</button>
+                <button type="submit" class="btn btn-danger w-100" onclick="return confirm('Are you sure you want to add this admin?\nKindly Re-Check the information, before proceeding.')">Add Admin</button>
             </form>
 
             <div class="text-center mt-3">
