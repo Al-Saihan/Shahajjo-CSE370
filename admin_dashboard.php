@@ -26,9 +26,14 @@ try {
 try {
     $stmt = $pdo->query("
         SELECT 
-        *
-        FROM
-        user_table
+            u.id, u.first_name, u.middle_name, u.last_name, u.email,
+            u.role, u.created_at, u.status, u.admin_id,
+            d.address AS donor_address, d.contact_number AS donor_contact,
+            r.address AS recipient_address, r.contact_number AS recipient_contact
+        FROM user_table u
+        LEFT JOIN donor_table d ON u.id = d.user_id
+        LEFT JOIN recipient_table r ON u.id = r.user_id
+        ORDER BY u.id ASC;
     ");
     $users = $stmt->fetchAll();
 } catch (PDOException $e) {
@@ -200,7 +205,7 @@ try {
                                     <span>
                                         <?php if ($user['role'] === 'admin'): ?>
                                             <?php
-                                            // Fetch admin_name for the current admin user
+                                            // Fetch admin_name for the admin user
                                             $admin_name = '';
                                             try {
                                                 $stmt = $pdo->prepare("
@@ -310,7 +315,7 @@ try {
                                                         </div>
                                                         <div class="address-box">
                                                             <p><strong>Phone Number:</strong></p>
-                                                            <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span>Not provided</span>' ?></p>
+                                                            <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span>Not provided</span>' ?></p>
                                                         </div>
 
                                                     <?php elseif ($user['role'] === 'recipient'): ?>
