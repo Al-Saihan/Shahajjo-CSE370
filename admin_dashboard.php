@@ -24,6 +24,10 @@ try {
 
 // Get all users with complete details
 try {
+    // GET METHOD to get the sorting parameters
+    $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'id';  // Default to ID
+    $sort_order = isset($_GET['sort_order']) ? strtoupper($_GET['sort_order']) : 'ASC';  // Default to ASC
+
     $stmt = $pdo->query("
         SELECT 
             u.id, u.first_name, u.middle_name, u.last_name, u.email,
@@ -33,8 +37,9 @@ try {
         FROM user_table u
         LEFT JOIN donor_table d ON u.id = d.user_id
         LEFT JOIN recipient_table r ON u.id = r.user_id
-        ORDER BY u.id ASC;
+        ORDER BY $sort_by $sort_order;
     ");
+    // ORDER BY u.role DESC, u.id ASC;
     $users = $stmt->fetchAll();
 } catch (PDOException $e) {
     die("Database error 1: " . $e->getMessage());
@@ -163,6 +168,34 @@ try {
             User Management
             <a href="add_admin.php" class="btn btn-danger btn-sm">Add Admin</a>
         </h2>
+
+        <!-- SORTING HERE -->
+
+        <div class="d-flex justify-content-start mb-3">
+            <form method="GET" action="admin_dashboard.php" class="d-flex align-items-center flex-wrap gap-2">
+                <div class="d-flex align-items-center">
+                    <label for="sort_by" class="form-label mb-0 me-2">Sort By:</label>
+                    <select name="sort_by" id="sort_by" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="id" <?= !isset($_GET['sort_by']) || $_GET['sort_by'] === 'id' ? 'selected' : '' ?>>ID</option>
+                        <option value="first_name" <?= isset($_GET['sort_by']) && $_GET['sort_by'] === 'first_name' ? 'selected' : '' ?>>Name</option>
+                        <option value="status" <?= isset($_GET['sort_by']) && $_GET['sort_by'] === 'status' ? 'selected' : '' ?>>Status</option>
+                        <option value="role" <?= isset($_GET['sort_by']) && $_GET['sort_by'] === 'role' ? 'selected' : '' ?>>Role</option>
+                        <option value="created_at" <?= isset($_GET['sort_by']) && $_GET['sort_by'] === 'created_at' ? 'selected' : '' ?>>Joined Date</option>
+                    </select>
+                </div>
+
+                <div class="d-flex align-items-center">
+                    <label for="sort_order" class="form-label mb-0 me-2">Order:</label>
+                    <select name="sort_order" id="sort_order" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="asc" <?= !isset($_GET['sort_order']) || strtolower($_GET['sort_order']) === 'asc' ? 'selected' : '' ?>>Ascending</option>
+                        <option value="desc" <?= isset($_GET['sort_order']) && strtolower($_GET['sort_order']) === 'desc' ? 'selected' : '' ?>>Descending</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <!-- SORTING END -->
+
 
         <div class="table-container"> <!-- Added table-container class -->
             <div class="table-responsive">
