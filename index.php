@@ -43,6 +43,15 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 <a href="register.php" class="btn btn-primary btn-lg me-2">Register</a>
                 <a href="login.php" class="btn btn-outline-primary btn-lg">Login</a>
             </div>
+
+            <!-- // ! NOTE -->
+            <!-- // !? TEMPORARY BUTTONS FOR TESTING PURPOSES -- REMOVE THIS IN PRODUCTION -->
+            <div class="mt-4">
+                <a href="refreshDB.php" class="btn btn-danger btn-lg me-2" onclick="return confirm('Are You Sure You Want To Rebuild The Database With Dummy Users?');">Refresh Database<br>TEMPORARY</a>
+            </div>
+            <!-- // ? TEMPORARY BUTTONS FOR TESTING PURPOSES -- REMOVE THIS IN PRODUCTION -->
+            <!-- // ! NOTE -->
+
         </div>
     </div>
 
