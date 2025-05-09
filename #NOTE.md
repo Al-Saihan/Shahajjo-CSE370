@@ -7,9 +7,9 @@
 
 - Sakib:
 
-- Faiyaz: 
+- Faiyaz:
 
-- Saihan: 
+- Saihan:
 
 # Ignore Files:
 
@@ -17,3 +17,9 @@
 2. "donations" folder errors
 3. ***
 4. ***
+
+# SOMETHING TO DO AT THE END OF THE PROJECT
+
+1. Add authorized in all of the necessary files
+2. Are we using /includes/function.php?
+3. Are we using /includes/paths.php? || we could tho??
