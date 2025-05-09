@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/config.php';
+require_once '../includes/config.php';
 session_start();
 
 // Check admin role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -152,12 +152,12 @@ try {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container">
-            <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="index.php">Shahajjo</a>
+            <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="../index.php">Shahajjo</a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
                     Admin ID: <?= $_SESSION['user_id'] ?>
                 </span>
-                <a class="nav-link" href="logout.php">Logout</a>
+                <a class="nav-link" href="../process_logout.php">Logout</a>
             </div>
         </div>
     </nav>
@@ -172,7 +172,7 @@ try {
         <!-- SORTING HERE -->
 
         <div class="d-flex justify-content-start mb-3">
-            <form method="GET" action="admin_dashboard.php" class="d-flex align-items-center flex-wrap gap-2">
+            <form method="GET" action="dashboard.php" class="d-flex align-items-center flex-wrap gap-2">
                 <div class="d-flex align-items-center">
                     <label for="sort_by" class="form-label mb-0 me-2">Sort By:</label>
                     <select name="sort_by" id="sort_by" class="form-select form-select-sm" onchange="this.form.submit()">
@@ -271,7 +271,7 @@ try {
                                         <ul class="dropdown-menu bg-dark text-white" aria-labelledby="manageDropdown<?= $user['id'] ?>">
                                             <!-- CHANGE STATUS/VERIFICATION -->
                                             <li>
-                                                <form action="verify_user.php" method="POST" style="margin: 0;">
+                                                <form action="process_verify_user.php" method="POST" style="margin: 0;">
                                                     <?php if ($user['id'] === $admin_id): ?>
                                                         <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot change your Status</div>
                                                     <?php elseif ($user['role'] === 'admin'): ?>
@@ -285,7 +285,7 @@ try {
 
                                             <!-- CHANGE BLACKLIST SECTION -->
                                             <li>
-                                                <form action="blacklist_user.php" method="POST" style="margin: 0;">
+                                                <form action="process_blacklist_user.php" method="POST" style="margin: 0;">
                                                     <?php if ($user['id'] === $admin_id): ?>
                                                         <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot Blacklist yourself</div>
                                                     <?php elseif ($user['role'] === 'admin'): ?>

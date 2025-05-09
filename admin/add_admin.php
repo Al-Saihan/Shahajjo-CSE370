@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-require_once 'includes/config.php';
+require_once '../includes/config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -54,7 +54,7 @@ if ($registration_success) {
 
             <div class="auth-header">
                 <div class="auth-logo text-center">
-                    <a href="admin_dashboard.php" style="text-decoration: none; font-weight: bold; color: red; font-size: 2.5rem; transition: color 0.3s;" onmouseover="this.style.color='#b30000';" onmouseout="this.style.color='red';">Shahajjo</a>
+                    <a href="dashboard.php" style="text-decoration: none; font-weight: bold; color: red; font-size: 2.5rem; transition: color 0.3s;" onmouseover="this.style.color='#b30000';" onmouseout="this.style.color='red';">Shahajjo</a>
                 </div>
             </div>
 
@@ -137,7 +137,7 @@ if ($registration_success) {
             </form>
 
             <div class="text-center mt-3">
-                <p> <a href="admin_dashboard.php" style="color: red;">Go Back To Dashboard</a></p>
+                <p> <a href="dashboard.php" style="color: red;">Go Back To Dashboard</a></p>
             </div>
         </div>
     </div>

@@ -1,10 +1,10 @@
 <?php
-require_once 'includes/config.php';
+require_once '../includes/config.php';
 session_start();
 
 // Check admin role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -34,7 +34,7 @@ foreach ($users as $u) {
     echo "Searching User Id = {$u['id']}<br>";
     if ($u['id'] == $user_id) {
         if ($u['role'] === 'admin') {
-            header("Location: admin_dashboard.php?error=Cannot unverify admin");
+            header("Location: dashboard.php?error=Cannot unverify admin");
             exit();
         }
         echo "Matched with User Id = {$u['id']}<br>";
@@ -64,5 +64,5 @@ try {
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
 }
-header("Location: admin_dashboard.php");
+header("Location: dashboard.php");
 exit();

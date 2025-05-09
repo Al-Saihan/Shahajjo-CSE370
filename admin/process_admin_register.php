@@ -1,5 +1,5 @@
 <?php
-require_once 'includes/config.php';
+require_once '../includes/config.php';
 
 // Enable error reporting
 error_reporting(E_ALL);
@@ -18,7 +18,7 @@ $_SESSION['register_data'] = $_POST;
 // Only handle POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     $_SESSION['register_errors'][] = "Invalid request method";
-    header("Location: register.php");
+    header("Location: ../register.php");
     exit();
 }
 
@@ -111,14 +111,14 @@ try {
     $_SESSION['registration_success'] = true;
     // sendResponse('200', 'TRUE', "registration_success");
 
-    header("Location: admin_dashboard.php");
+    header("Location: dashboard.php");
     exit();
 } catch (PDOException $e) {
     $pdo->rollBack();
     $_SESSION['register_errors'] = ["Registration failed. Please try again."];
     sendResponse('400', 'FALSE', $e->getMessage());
     error_log("Registration error: " . $e->getMessage());
-    header("Location: register.php");
+    header("Location: ../register.php");
     exit();
 }
 function sendResponse($status, $success, $message, $data = null)

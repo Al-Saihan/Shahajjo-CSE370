@@ -70,7 +70,7 @@ try {
                 <span class="navbar-text me-3">
                 Donor ID: <?= htmlspecialchars($donor_id) ?>
                 </span>
-                <a class="nav-link" href="../logout.php">Logout</a>
+                <a class="nav-link" href="../process_logout.php">Logout</a>
             </div>
         </div>
     </nav>

@@ -3,7 +3,7 @@
 $host = 'localhost';
 $username = 'root';
 $password = '';
-$sqlFile = __DIR__ . '/Extras/table-data.txt'; // Full path to your SQL file
+$sqlFile = __DIR__ . '/#extras/table-data.txt'; // Full path to your SQL file
 
 try {
   // Connect to MySQL server

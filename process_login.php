@@ -50,7 +50,7 @@ try {
     // Redirect based on role
     switch ($_SESSION['role']) {
         case 'admin':
-            header("Location: admin_dashboard.php");
+            header("Location: admin/dashboard.php");
             break;
         case 'recipient':
             header("Location: recipient/profile.php");
