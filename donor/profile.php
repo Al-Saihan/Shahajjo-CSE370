@@ -56,6 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+        .custom-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
         .info-box {
             background: #f8f9fa;
             border-radius: 8px;
@@ -67,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="../../index.php">Shahajjo</a>
+        <a class="navbar-brand fs-2 fw-bold" href="../index.php">Shahajjo</a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
                     Donor ID: <?= $donor['id'] ?>
@@ -77,19 +81,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </nav>
 
-    <div class="container py-5">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card profile-card mb-4">
-                    <div class="card-body text-center">
-                        <h4><?= htmlspecialchars($donor['first_name'].' '.$donor['last_name']) ?></h4>
-                        <p class="text-muted">Donor Profile</p>
-                        <hr>
-                        <p><strong>Member Since:</strong><br>
-                        <?= date('F j, Y', strtotime($donor['registration_date'])) ?></p>
-                    </div>
+    <div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card profile-card mb-4">
+                <div class="card-body text-center">
+                    <h4><?= htmlspecialchars($donor['first_name'].' '.$donor['last_name']) ?></h4>
+                    <p class="text-muted">Donor Profile</p>
+                    <hr>
+                    <p><strong>Member Since:</strong><br>
+                        <?= date('F j, Y', strtotime($donor['registration_date'])) ?>
+                    </p>
                 </div>
             </div>
+
+            <!-- Donate Button -->
+            <div class="text-start px-2">
+            <div class="card-body text-center">
+                <a href="donate.php" class="btn btn-success custom-card" style="width: 150px; height: 60px; font-size: 1.7rem;">
+                    Donate
+                </a>
+                </div>
+            </div>
+        </div>
 
             <div class="col-md-8">
                 <?php if (isset($_SESSION['profile_update'])): ?>
