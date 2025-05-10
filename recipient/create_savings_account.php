@@ -16,7 +16,7 @@ try {
     ");
     $stmt->execute([$_SESSION['user_id']]);
     $recipient = $stmt->fetch();
-    
+
     if (!$recipient) {
         die("Recipient not found");
     }
@@ -29,7 +29,7 @@ try {
     $stmt = $pdo->prepare("SELECT * FROM savings_account WHERE recipient_uid = ?");
     $stmt->execute([$recipient['id']]);
     $existingAccount = $stmt->fetch();
-    
+
     if ($existingAccount) {
         $_SESSION['account_message'] = "You already have an account. Please click on 'My Account' to view it.";
         header("Location: profile.php");  // Redirect back to profile page
@@ -43,19 +43,17 @@ try {
 try {
     // Get the current wallet balance
     $walletBalance = $recipient['wallet'];
-    
+
     // Insert new savings account
     $stmt = $pdo->prepare("
         INSERT INTO savings_account (recipient_uid, money, created_at) 
         VALUES (?, ?, CURRENT_DATE)
     ");
     $stmt->execute([$recipient['id'], $walletBalance]);
-    
+
     $_SESSION['account_success'] = "Savings account created successfully!";
     header("Location: savings_account.php");  // Go to account page after creation
     exit();
-    
 } catch (PDOException $e) {
     die("Failed to create savings account: " . $e->getMessage());
 }
-?>
