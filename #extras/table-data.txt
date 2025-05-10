@@ -14,7 +14,7 @@ CREATE TABLE admin_table (
 -- 2. USER_TABLE - Stores user information with roles and statuses
 CREATE TABLE user_table (
     id INT(11) PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(50) NOT NULL,
+    first_name VARCHAR(50) NOT NULL,d
     middle_name VARCHAR(50),
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
@@ -140,9 +140,11 @@ CREATE TABLE feedback_table (
   uid INT(11),
   review TEXT,
   posting_date DATE,
+  stars INT CHECK (stars BETWEEN 0 AND 5),
   PRIMARY KEY (uid, posting_date),
   FOREIGN KEY (uid) REFERENCES user_table(id)
 );
+
 
 
 
@@ -208,6 +210,18 @@ INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_re
 (3, 9, current_timestamp(), 0, NULL, 'Bashundhara', '01887654321', 'Repairing flood-damaged home', current_timestamp()),
 (4, 10, current_timestamp(), 0, NULL, 'Motijheel', '01998765432', 'Starting a small tailoring business', current_timestamp()),
 (5, 11, current_timestamp(), 0, NULL, 'Farmgate', '01665432109', 'University tuition fees for orphan student', current_timestamp());
+
+
+
+
+- 17. Dummy reviews
+
+INSERT INTO feedback_table (uid, review, posting_date, stars) VALUES
+(2, 'Trusted platform. I always feel confident donating here. Transparent and secure.', '2025-05-01', 5),
+(4, 'Quick process and smooth transactions. Definitely donating again soon!', '2025-05-02', 5),
+(5, 'Love the clear impact tracking. Makes giving feel personal and meaningful.', '2025-05-03', 4),
+(6, 'Good service but the donation receipt came late. Still decent experience.', '2025-05-04', 3),
+(7, 'UI was okay, but I wish they had more payment methods available.', '2025-05-05', 3),
 
 
 -- FINISH

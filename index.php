@@ -55,6 +55,31 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         </div>
     </div>
 
+    <!-- Feedback Section -->
+    <div class="container text-center mt-5">
+        <h2>Feedback</h2>
+        <div id="feedback-carousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <?php
+                // Example feedbacks array
+                $feedbacks = [
+                    "This platform has changed lives. Highly recommended!",
+                    "A seamless way to donate and make a difference.",
+                    "Transparent and trustworthy donation system.",
+                    "Thank you for making it so easy to help others."
+                ];
+
+                foreach ($feedbacks as $index => $feedback) {
+                    $activeClass = $index === 0 ? 'active' : '';
+                    echo "<div class='carousel-item $activeClass'>";
+                    echo "<p class='lead'>$feedback</p>";
+                    echo "</div>";
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="text-center">
         <div class="container">
