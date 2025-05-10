@@ -144,16 +144,23 @@ try {
                                 }
                             </style>
                             <p class="fw-bold fs-1 text-taka">৳<?= number_format($account['money'], 2) ?></p>
-                            <button type="button" class="btn btn-depo text-depo mt-3" data-bs-toggle="modal" data-bs-target="#depositModal">Deposit</button>                            
+                            
                         </div>
                         <div class="col-md-6">
                             <h5>Account Created On</h5>
                             <p><?= date('F j, Y', strtotime($account['created_at'])) ?></p>
-                        </div>
+                            
+                            <hr>
+                            <!-- Deposit Button -->
+                            <button type="button" class="btn btn-depo text-depo mt-3" data-bs-toggle="modal" data-bs-target="#depositModal">Deposit</button>
+                            
+                            <!-- Withdraw Button -->
+                            <button type="button" class="btn btn-depo text-depo mt-3" data-bs-toggle="modal" data-bs-target="#withdrawModal">Withdraw</button>
+
+                        </div>                     
                     </div>
 
                     <!-- THROW ERROR MESSAGE HERE -->
-
                     <?php if (isset($_SESSION['deposit_success'])): ?>
                         <div class="alert alert-success alert-dismissible fade show">
                             <?= htmlspecialchars($_SESSION['deposit_success']) ?>
@@ -169,16 +176,69 @@ try {
                         </div>
                         <?php unset($_SESSION['deposit_error']); ?>
                     <?php endif; ?>
+                    
+                    <?php if (isset($_SESSION['withdraw_success'])): ?>
+                        <div class="alert alert-success alert-dismissible fade show">
+                            <?= htmlspecialchars($_SESSION['withdraw_success']) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <?php unset($_SESSION['withdraw_success']); ?>
+                    <?php endif; ?>
 
+                    <?php if (isset($_SESSION['withdraw_error'])): ?>
+                        <div class="alert alert-danger alert-dismissible fade show">
+                            <?= htmlspecialchars($_SESSION['withdraw_error']) ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <?php unset($_SESSION['withdraw_error']); ?>
+                    <?php endif; ?>
                     <!-- ERROR MESSAGE ENDS HERE -->
 
+                    
                     <div class="row mb-4 bg-dp p-3 rounded">
                         <div class="col-md-12">
                             <h5>Account Activity</h5>
                             <p>Your account has been active for <?= $account['time_limit'] ?> days</p>
                         </div>
                     </div>
-                    
+
+                    <!-- Withdrawal History -->
+                    <div class="row mb-4 bg-dp p-3 rounded">
+                        <h3>Withdrawal Log</h3>
+                        <?php
+                    $stmt = $pdo->prepare("SELECT w.* FROM savings_withdrawal_log w
+                        JOIN savings_account s ON w.account_no = s.account_no
+                        WHERE s.recipient_uid = ?
+                        ORDER BY w.transaction_date DESC");
+                    $stmt->execute([$recipient['id']]);
+
+                        $withdrawals = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        
+                        if (empty($withdrawals)): ?>
+                            <p>No withdrawal history found.</p>
+                        <?php else: ?>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($withdrawals as $withdrawal): ?>
+                                    <tr>
+                                        <td><?php echo date('M j, Y g:i A', strtotime($withdrawal['transaction_date'])); ?></td>
+                                        <td><?php echo number_format($withdrawal['amount'], 2); ?> BDT</td>
+                                        <td><?php echo ucfirst($withdrawal['withdrawal_method']); ?></td>
+                                        <td><?php echo ucfirst($withdrawal['status']); ?></td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        <?php endif; ?>
+                    </div>
                     <div class="text-center mt-4">
                         <a href="profile.php" class="btn btn-pp">Back to Profile</a>
                     </div>
@@ -191,7 +251,6 @@ try {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Deposit popup(modal) and everything in it  -->
-
 <div class="modal fade" id="depositModal" tabindex="-1" aria-labelledby="depositModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content" style="background: rgba(255, 255, 255, 0.85);">
@@ -218,6 +277,7 @@ try {
                     </div>
                     <input type="hidden" name="account_no" value="<?= $account['account_no'] ?>">
                 </div>
+
                 <!-- final deposit & close button -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -227,5 +287,43 @@ try {
         </div>
     </div>
 </div>
+
+<!-- Withdraw popup(modal) and everything in it  -->
+<div class="modal fade" id="withdrawModal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="background: rgba(255, 255, 255, 0.85);">
+            <div class="modal-header bg-dark_pink text-light">
+                <h5 class="modal-title" id="withdrawModalLabel">Withdraw from Savings</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="process_withdraw.php">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="withdrawAmount" class="form-label">Amount (৳)</label>
+                        <input type="number" class="form-control" id="withdrawAmount" name="amount" min="1" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="withdrawMethod" class="form-label">Withdrawal Method</label>
+                        <select class="form-select" id="withdrawMethod" name="payment_method" required>
+                            <option value="" selected disabled>Select withdrawal method</option>
+                            <option value="Bkash">Bkash</option>
+                            <option value="Nagad">Nagad</option>
+                            <option value="Rocket">Rocket</option>
+                            <option value="Upay">Upay</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <input type="hidden" name="account_no" value="<?= $account['account_no'] ?>">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-pp">Withdraw</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 </body>
 </html>
