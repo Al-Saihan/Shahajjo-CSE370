@@ -409,173 +409,107 @@ try {
 
         <div class="container my-5">
 
-        <!-- DONATION MANAGEMENT -->
-            <h2 class="mb-4 d-flex justify-content-between align-items-center">
-                Donation Management
-            </h2>
+            <!-- DONATION MANAGEMENT -->
+            <?php
+            // Query to fetch donation details with user info
+            try {
+                // SQL query to fetch detailed donation info
+                $stmt = $pdo->query("
+                    SELECT 
+                        td.donation_no,
+                        td.donations_amount,
+                        td.donation_date,
+                        d.user_id AS donor_uid,
+                        r.user_id AS recipient_uid,
+                        CONCAT(du.first_name, ' ', du.middle_name, ' ', du.last_name) AS donor_name,
+                        CONCAT(ru.first_name, ' ', ru.middle_name, ' ', ru.last_name) AS recipient_name,
+                        du.email AS donor_email,
+                        ru.email AS recipient_email,
+                        d.address AS donor_address,
+                        r.address AS recipient_address,
+                        d.contact_number AS donor_contact,
+                        r.contact_number AS recipient_contact
+                    FROM total_donations td
+                    JOIN donor_table d ON td.donor_id = d.id
+                    JOIN recipient_table r ON td.recipient_id = r.id
+                    JOIN user_table du ON d.user_id = du.id
+                    JOIN user_table ru ON r.user_id = ru.id");
 
-            <div class="table-container" style="border: 2px solid gray;"> <!-- Added table-container class -->
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover text-center">
-                        <tr class="table-dark">
-                            <th style="border: 1px solid #dee2e6;">ID</th>
-                            <th style="border: 1px solid #dee2e6;">Name</th>
-                            <th style="border: 1px solid #dee2e6;">Email</th>
-                            <th style="border: 1px solid #dee2e6;">Status</th>
-                            <th style="border: 1px solid #dee2e6;">Role</th>
-                            <th style="border: 1px solid #dee2e6;">Joined</th>
-                            <th style="border: 1px solid #dee2e6;">Actions</th>
+                $result = $stmt->fetchAll();
+            } catch (Exception $e) {
+                $_SESSION['error'] = "Error loading donation data.";
+                header("Location: dashboard.php"); // or any relevant fallback
+                exit();
+            }
+            ?>
+
+            <div class="container mt-5">
+                <h2 class="mb-4">Donation Management</h2>
+                <table class="table table-hover" id="donationTable">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Donation No</th>
+                            <th>Donor Name</th>
+                            <th>Recipient Name</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                            <th>Action</th>
                         </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($users as $user): ?>
-                                <tr data-toggle="collapse" data-target="#details-<?= $user['id'] ?>" aria-expanded="false" aria-controls="details-<?= $user['id'] ?>">
-                                    <td><?= $user['id'] ?></td>
-                                    <td>
-                                        <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
-                                        <?php if ($user['middle_name']): ?>
-                                            <br><small class="text-muted"><?= htmlspecialchars($user['middle_name']) ?></small>
-                                        <?php endif; ?>
-                                    </td>
-                                    <td><?= htmlspecialchars($user['email']) ?></td>
-                                    <td>
-                                        <!-- <?= htmlspecialchars($user['status']) ?> -->
-                                        <span class="badge <?=
-                                                            $user['status'] === 'unverified' ? 'badge-unverified' : ($user['status'] === 'verified' ? 'badge-verified' : 'badge-blacklisted')
-                                                            ?>">
-                                            <?= ucfirst($user['status']) ?>
-                                    </td>
-                                    <td>
-                                        <span class="badge <?=
-                                                            $user['role'] === 'admin' ? 'badge-admin' : ($user['role'] === 'donor' ? 'badge-donor' : 'badge-recipient')
-                                                            ?>">
-                                            <?= ucfirst($user['role']) ?>
-                                        </span>
-                                        <br>
-                                        <span>
-                                            <?php if ($user['role'] === 'admin'): ?>
-                                                <?php
-                                                // Fetch admin_name for the admin user
-                                                $admin_name = '';
-                                                try {
-                                                    $stmt = $pdo->prepare("
-                                        SELECT admin_table.admin_name 
-                                        FROM user_table 
-                                        INNER JOIN admin_table 
-                                        ON user_table.admin_id = admin_table.admin_id 
-                                        WHERE user_table.id = :user_id
-                                        ");
-                                                    $stmt->execute(['user_id' => $user['id']]);
-                                                    $result = $stmt->fetch();
-                                                    if ($result) {
-                                                        $admin_name = $result['admin_name'];
-                                                    }
-                                                } catch (PDOException $e) {
-                                                    $admin_name = 'Error fetching name';
-                                                }
-                                                ?>
-                                                <span class="badge badge-admin"><?= htmlspecialchars($admin_name) ?></span>
-                                            <?php endif; ?>
-                                        </span>
-                                    </td>
-                                    <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
-                                    <td>
-                                        <div>
-                                            <!-- MANAGE BUTTON -->
-                                            <button class="btn btn-sm btn-warning border border-dark" type="button" id="manageDropdown<?= $user['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                                                Manage
-                                            </button>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($result as $donation): ?>
+                            <tr class="main-row" data-toggle="collapse" data-target="#details-<?php echo $donation['donation_no']; ?>" aria-expanded="false" aria-controls="details-<?php echo $donation['donation_no']; ?>">
+                                <td><?php echo $donation['donation_no']; ?></td>
+                                <td><?php echo $donation['donor_name']; ?></td>
+                                <td><?php echo $donation['recipient_name']; ?></td>
+                                <td><?php echo $donation['donations_amount']; ?></td>
+                                <td><?php echo $donation['donation_date']; ?></td>
+                                <td>
+                                    <form method="POST" action="process_handling_donations.php" class="d-inline">
+                                        <input type="hidden" name="donation_no" value="<?php echo $donation['donation_no']; ?>">
+                                        <button type="submit" name="action" value="confirm" class="btn btn-success btn-sm">Confirm</button>
+                                        <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr class="collapse" id="details-<?php echo $donation['donation_no']; ?>">
+                                <td colspan="6">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h5>Donor Details</h5>
+                                            <p><strong>Email:</strong> <?php echo $donation['donor_email']; ?></p>
+                                            <p><strong>Contact:</strong> <?php echo $donation['donor_contact']; ?></p>
+                                            <p><strong>Address:</strong> <?php echo $donation['donor_address']; ?></p>
                                         </div>
-                                    </td>
-                                </tr>
-                                <tr class="detail-row">
-                                    <td colspan="7" class="p-0">
-                                        <div id="details-<?= $user['id'] ?>" class="collapse">
-                                            <div class="user-details">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <h5>Basic Information</h5>
-                                                        <div class="address-box">
-
-                                                            <p><strong>Full Name:</strong>
-                                                                <?= htmlspecialchars($user['first_name'] . ' ' .
-                                                                    ($user['middle_name'] ? $user['middle_name'] . ' ' : '') .
-                                                                    $user['last_name']) ?>
-                                                            </p>
-                                                            <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
-                                                            <?php if ($user['role'] !== 'admin'): ?>
-                                                                <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
-                                                            <?php endif; ?>
-
-                                                            <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-
-                                                        <?php if ($user['role'] === 'donor'): ?>
-                                                            <h5>Contact Information</h5>
-
-                                                            <div class="address-box">
-                                                                <p><strong>Address:</strong></p>
-                                                                <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
-                                                            </div>
-                                                            <div class="address-box">
-                                                                <p><strong>Phone Number:</strong></p>
-                                                                <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span>Not provided</span>' ?></p>
-                                                            </div>
-
-                                                        <?php elseif ($user['role'] === 'recipient'): ?>
-                                                            <h5>Contact Information</h5>
-
-                                                            <div class="address-box">
-                                                                <p><strong>Address:</strong></p>
-                                                                <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
-                                                            </div>
-                                                            <div class="address-box">
-                                                                <p><strong>Phone Number:</strong></p>
-                                                                <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span>Not provided</span>' ?></p>
-                                                            </div>
-
-                                                        <?php else: ?>
-                                                            <h5>Administration Information</h5>
-
-                                                            <div class="address-box">
-                                                                <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
-                                                                <?php
-                                                                try {
-                                                                    $stmt = $pdo->prepare("
-                                                        SELECT admin_table.admin_id, admin_table.access_level
-                                                        FROM user_table
-                                                        INNER JOIN admin_table
-                                                        ON user_table.admin_id = admin_table.admin_id
-                                                        WHERE user_table.id = :user_id
-                                                        ");
-                                                                    $stmt->execute(['user_id' => $user['id']]);
-                                                                    $adminDetails = $stmt->fetch();
-                                                                    if ($adminDetails) {
-                                                                        echo '<p><strong>Admin ID:</strong> ' . htmlspecialchars($adminDetails['admin_id']) . '</p>';
-                                                                        echo '<p><strong>Access Level:</strong> ' . htmlspecialchars(ucwords(str_replace('_', ' ', $adminDetails['access_level']))) . '</p>';
-                                                                    } else {
-                                                                        echo '<p class="text-muted">Admin details not found</p>';
-                                                                    }
-                                                                } catch (PDOException $e) {
-                                                                    echo '<p class="text-danger">Error fetching admin details</p>';
-                                                                }
-                                                                ?>
-                                                            </div>
-
-                                                        <?php endif; ?>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                        <div class="col-md-6">
+                                            <h5>Recipient Details</h5>
+                                            <p><strong>Email:</strong> <?php echo $donation['recipient_email']; ?></p>
+                                            <p><strong>Contact:</strong> <?php echo $donation['recipient_contact']; ?></p>
+                                            <p><strong>Address:</strong> <?php echo $donation['recipient_address']; ?></p>
                                         </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
+
+            <!-- Optional: jQuery for smoother toggle (if Bootstrap JS not included) -->
+            <script>
+                document.querySelectorAll('.main-row').forEach(row => {
+                    row.addEventListener('click', () => {
+                        const target = document.getElementById(row.getAttribute('data-target').replace('#', ''));
+                        if (target.classList.contains('show')) {
+                            target.classList.remove('show');
+                        } else {
+                            target.classList.add('show');
+                        }
+                    });
+                });
+            </script>
+
+
 
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
