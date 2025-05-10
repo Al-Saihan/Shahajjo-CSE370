@@ -83,9 +83,30 @@ try {
         .btn-pp {
             background-color: rgba(61, 17, 55, 0.35);
         }
+        
+        /* ADD YOUR TABLE STYLES HERE */
+        .wd-table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #fff;
+            --bs-table-border-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .wd-table thead {
+            background-color: rgba(39, 2, 34, 0.85);
+            color: #fff;
+        }
+        
+        .wd-table tbody {
+            background-color: rgba(230, 214, 229, 0.47);
+        }
+        
+        .wd-table tbody tr:hover {
+            background-color: rgba(99, 3, 32, 0.25) !important;
+        }
+        
     </style>
 </head>
-<body style="background: linear-gradient(to right, rgb(151, 128, 149), rgb(204, 205, 206));">
+<body style="background: linear-gradient(to right, rgb(92, 74, 91), rgb(204, 205, 206));">
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(60, 50, 65, 0.6);">
     <div class="container"> 
@@ -196,14 +217,13 @@ try {
 
                     
                     <div class="row mb-4 bg-dp p-3 rounded">
-                        <div class="col-md-12">
+                        <div class="col-md-12 fw-bold">
                             <h5>Account Activity</h5>
                             <p>Your account has been active for <?= $account['time_limit'] ?> days</p>
                         </div>
                     </div>
 
                     <!-- Withdrawal log -->
-                    <!-- In the Withdrawal log section, replace the entire table with this: -->
                     <div class="row mb-4 bg-dp p-3 rounded">
                         <h3>Withdrawal Log</h3>
                         <?php
@@ -219,33 +239,36 @@ try {
                         if (empty($withdrawals)): ?>
                             <p>No withdrawal history found.</p>
                         <?php else: ?>
-                            <table class="table table-striped table-hover table-bordered bg-dark_pink text-white rounded">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th>Date</th>
-                                        <th>Amount</th>
-                                        <th>Method</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($withdrawals as $withdrawal): ?>
-                                    <tr>
-                                        <td><?php echo date('M j, Y g:i A', strtotime($withdrawal['transaction_date'])); ?></td>
-                                        <td>৳<?php echo number_format($withdrawal['amount'], 2); ?></td>
-                                        <td><?php echo ucfirst($withdrawal['withdrawal_method']); ?></td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        <?php endif; ?>
-                    </div>
+
+                            <div class="table-responsive">
+                                        <table class="table wd-table table-borderless table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th class="ps-3">Date</th>
+                                                    <th class="text-end pe-3">Amount</th>
+                                                    <th class="text-center">Method</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php foreach ($withdrawals as $withdrawal): ?>
+                                                <tr>
+                                                    <td class="ps-3 text-dark fw-bold"><?= date('M j, Y g:i A', strtotime($withdrawal['transaction_date'])) ?></td>
+                                                    <td class="text-end pe-3 text-dark fw-bold">৳<?= number_format($withdrawal['amount'], 2) ?></td>
+                                                    <td class="text-center text-capitalize text-dark fw-bold"><?= $withdrawal['withdrawal_method'] ?></td>
+                                                </tr>
+                                                <?php endforeach; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                     <style>
                         .bg-sakib {
-                            background-color:rgba(60, 50, 65, 0.6); /* Custom color (Hex) */
+                            background-color:rgba(60, 50, 65, 0.6);
                         }
                     </style>
                     <div class="text-center mt-4">
-                        <a href="profile.php" class="btn btn-pp">Back to Profile</a>
+                        <a href="profile.php" class="btn btn-pp fw-bold">Back to Profile</a>
                     </div>
                 </div>
             </div>
