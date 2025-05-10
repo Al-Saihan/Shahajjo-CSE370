@@ -52,10 +52,10 @@ try {
     $stmt = $pdo->prepare("UPDATE savings_account SET money = money - ? WHERE account_no = ?");
     $stmt->execute([$amount, $accountNo]);
 
-    // Log withdrawal as approved/completed
+    // Log withdrawal (status removed)
     $stmt = $pdo->prepare("
-        INSERT INTO savings_withdrawal_log (account_no, amount, withdrawal_method, status)
-        VALUES (?, ?, ?, 'approved')
+        INSERT INTO savings_withdrawal_log (account_no, amount, withdrawal_method)
+        VALUES (?, ?, ?)
     ");
     $stmt->execute([$accountNo, $amount, $paymentMethod]);
 
