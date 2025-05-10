@@ -50,6 +50,7 @@ CREATE TABLE recipient_table (
     user_id INT(11) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     wallet FLOAT(10,2) DEFAULT 0.00,
+    income INT(11),
     last_received DATE,
     address TEXT,
     contact_number VARCHAR(20),
@@ -58,15 +59,14 @@ CREATE TABLE recipient_table (
     FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
 
-
-
--- 5. SAVING_ACCOUNT - Stores saving account details for recipients
-CREATE TABLE saving_account (
-  recipient_uid INT(11),
-  account_no VARCHAR(10) PRIMARY KEY,
-  time_limit DATE,
-  money DECIMAL(10,2),
-  FOREIGN KEY (recipient_uid) REFERENCES user_table(id)
+-- 5. SAVINGS_ACCOUNT - Stores saving account details for recipients
+CREATE TABLE savings_account (
+  account_no INT AUTO_INCREMENT PRIMARY KEY,
+  recipient_uid INT(11) NOT NULL,
+  money DECIMAL(10,2) DEFAULT 0.00,
+  created_at DATE DEFAULT CURRENT_DATE,
+  time_limit INT,
+  FOREIGN KEY (recipient_uid) REFERENCES recipient_table(id)
 );
 
 
@@ -141,9 +141,11 @@ CREATE TABLE feedback_table (
   uid INT(11),
   review TEXT,
   posting_date DATE,
+  stars INT CHECK (stars BETWEEN 0 AND 5),
   PRIMARY KEY (uid, posting_date),
   FOREIGN KEY (uid) REFERENCES user_table(id)
 );
+
 
 
 
@@ -210,5 +212,20 @@ INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_re
 (4, 10, current_timestamp(), 0, NULL, 'Motijheel', '01998765432', 'Starting a small tailoring business', current_timestamp()),
 (5, 11, current_timestamp(), 0, NULL, 'Farmgate', '01665432109', 'University tuition fees for orphan student', current_timestamp());
 
+
+
+
+-- 17. Dummy reviews
+
+INSERT INTO feedback_table (uid, review, posting_date, stars) VALUES
+(2, 'Trusted platform. I always feel confident donating here. Transparent and secure.', '2025-05-01', 5),
+(4, 'Quick process and smooth transactions. Definitely donating again soon!', '2025-05-02', 5),
+(5, 'Love the clear impact tracking. Makes giving feel personal and meaningful.', '2025-05-03', 4),
+(6, 'Good service but the donation receipt came late. Still decent experience.', '2025-05-04', 3),
+(7, 'UI was okay, but I wish they had more payment methods available.', '2025-05-05', 3),
+(3, 'Deeply grateful! Received funds right on time when I needed help the most.', '2025-05-08', 5),
+(8, 'Support was a blessing. The process was smooth and respectful.', '2025-05-09', 4),
+(9, 'I applied but never got any response. Disappointed with the lack of communication.', '2025-05-10', 1),
+(10, 'They promised help, but the form kept crashing. No way to follow up.', '2025-05-11', 2);
 
 -- FINISH

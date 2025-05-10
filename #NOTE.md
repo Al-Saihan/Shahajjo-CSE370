@@ -23,3 +23,4 @@
 1. Add authorized in all of the necessary files
 2. Are we using /includes/function.php?
 3. Are we using /includes/paths.php? || we could tho??
+4. Check if <body> title is correct everywhere! -- IMPORTATNT

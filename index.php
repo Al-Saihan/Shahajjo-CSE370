@@ -55,6 +55,55 @@ if (session_status() === PHP_SESSION_NONE) session_start();
         </div>
     </div>
 
+    <!-- Feedback Section -->
+    <div class="container text-center mt-5">
+        <h2>Our Recent Feedbacks</h2>
+        <div id="feedback-carousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <?php
+                try {
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            user_table.id AS user_id,
+                            user_table.first_name,
+                            user_table.middle_name,
+                            user_table.last_name,
+                            feedback_table.review,
+                            feedback_table.stars,
+                            feedback_table.posting_date
+                        FROM 
+                            feedback_table
+                        INNER JOIN 
+                            user_table ON feedback_table.uid = user_table.id
+                        WHERE 
+                            feedback_table.stars >= 3
+                        LIMIT 5");
+                    $stmt->execute();
+                    $feedbacks = $stmt->fetchAll();
+
+                    $isActive = true; // flages the first class as active for the carousel (Bootstrap Issue)
+                    foreach ($feedbacks as $feedback) {
+                        echo '<div class="carousel-item' . ($isActive ? ' active' : '') . '">';
+                        echo '<div class="d-block w-100 p-4 bg-light rounded">';
+                        echo '<p class="mb-1"> ' . htmlspecialchars($feedback['first_name'] . ' ' . ($feedback['middle_name'] ?? '') . ' ' . ($feedback['last_name'] ?? '')) . '</p>';
+                        echo '<p class="mb-1"><strong>Stars:</strong> ' . str_repeat('⭐', $feedback['stars']) . '</p>';
+                        echo '<p class="mb-0">' . htmlspecialchars($feedback['review']) . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                        $isActive = false;
+                    }
+                } catch (PDOException $e) {
+                    die("Database error: " . $e->getMessage());
+                }
+                ?>
+            </div>
+            <div class="mt-3">
+                <a href="feedback" class="btn btn-primary btn-lg">See All Feedback</a>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Footer -->
     <footer class="text-center">
         <div class="container">
