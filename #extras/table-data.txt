@@ -37,6 +37,7 @@ CREATE TABLE donor_table (
     last_donation DATE,
     address TEXT,
     contact_number VARCHAR(20),
+    total_income int(11),
     registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
