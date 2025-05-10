@@ -82,9 +82,7 @@ try {
 
         .user-details {
             background-color: #f8f9fa;
-            border-radius: 5px;
-            padding: 15px;
-            margin-top: 10px;
+            border-top: 1px solid #dee2e6;
         }
 
         .badge-admin {
@@ -200,15 +198,15 @@ try {
         <div class="table-container" style="border: 2px solid gray;"> <!-- Added table-container class -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover text-center">
-                    <thead
-                        <tr class="table-dark">
-                        <th style="border: 1px solid #dee2e6;">ID</th>
-                        <th style="border: 1px solid #dee2e6;">Name</th>
-                        <th style="border: 1px solid #dee2e6;">Email</th>
-                        <th style="border: 1px solid #dee2e6;">Status</th>
-                        <th style="border: 1px solid #dee2e6;">Role</th>
-                        <th style="border: 1px solid #dee2e6;">Joined</th>
-                        <th style="border: 1px solid #dee2e6;">Actions</th>
+                    <thead class="table-dark text-center">
+                        <tr>
+                            <th style="border: 1px solid #dee2e6;">ID</th>
+                            <th style="border: 1px solid #dee2e6;">Name</th>
+                            <th style="border: 1px solid #dee2e6;">Email</th>
+                            <th style="border: 1px solid #dee2e6;">Status</th>
+                            <th style="border: 1px solid #dee2e6;">Role</th>
+                            <th style="border: 1px solid #dee2e6;">Joined</th>
+                            <th style="border: 1px solid #dee2e6;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -321,7 +319,7 @@ try {
                             <tr class="detail-row">
                                 <td colspan="7" class="p-0">
                                     <div id="details-<?= $user['id'] ?>" class="collapse">
-                                        <div class="user-details">
+                                        <div class="user-details p-3 text-center">
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <h5>Basic Information</h5>
@@ -398,7 +396,6 @@ try {
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -419,10 +416,12 @@ try {
                         td.donation_no,
                         td.donations_amount,
                         td.donation_date,
+                        td.confirmation,
                         d.user_id AS donor_uid,
                         r.user_id AS recipient_uid,
-                        CONCAT(du.first_name, ' ', du.middle_name, ' ', du.last_name) AS donor_name,
-                        CONCAT(ru.first_name, ' ', ru.middle_name, ' ', ru.last_name) AS recipient_name,
+                        r.cause,
+                        CONCAT(du.first_name, ' ', COALESCE(du.middle_name, ''), ' ', du.last_name) AS donor_name,
+                        CONCAT(ru.first_name, ' ', COALESCE(ru.middle_name, ''), ' ', ru.last_name) AS recipient_name,
                         du.email AS donor_email,
                         ru.email AS recipient_email,
                         d.address AS donor_address,
@@ -433,7 +432,9 @@ try {
                     JOIN donor_table d ON td.donor_id = d.id
                     JOIN recipient_table r ON td.recipient_id = r.id
                     JOIN user_table du ON d.user_id = du.id
-                    JOIN user_table ru ON r.user_id = ru.id");
+                    JOIN user_table ru ON r.user_id = ru.id
+                    WHERE td.confirmation = 0;
+                ");
 
                 $result = $stmt->fetchAll();
             } catch (Exception $e) {
@@ -445,107 +446,155 @@ try {
 
             <div class="container mt-5">
                 <h2 class="mb-4">Donation Management</h2>
-                <table class="table table-hover" id="donationTable">
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Donation No</th>
-                            <th>Donor Name</th>
-                            <th>Recipient Name</th>
-                            <th>Amount</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($result as $donation): ?>
-                            <tr class="main-row" data-toggle="collapse" data-target="#details-<?php echo $donation['donation_no']; ?>" aria-expanded="false" aria-controls="details-<?php echo $donation['donation_no']; ?>">
-                                <td><?php echo $donation['donation_no']; ?></td>
-                                <td><?php echo $donation['donor_name']; ?></td>
-                                <td><?php echo $donation['recipient_name']; ?></td>
-                                <td><?php echo $donation['donations_amount']; ?></td>
-                                <td><?php echo $donation['donation_date']; ?></td>
-                                <td>
-                                    <form method="POST" action="process_handling_donations.php" class="d-inline">
-                                        <input type="hidden" name="donation_no" value="<?php echo $donation['donation_no']; ?>">
-                                        <button type="submit" name="action" value="confirm" class="btn btn-success btn-sm">Confirm</button>
-                                        <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
-                                    </form>
-                                </td>
+                <div class="table-container" style="border: 2px solid gray;"> <!-- Added table-container class -->
+                    <table class="table table-striped table-hover text-center">
+                        <thead class="table-dark text-center">
+                            <tr>
+                                <th>Donation No</th>
+                                <th>Donor Name</th>
+                                <th>Recipient Name</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
-                            <tr class="collapse" id="details-<?php echo $donation['donation_no']; ?>">
-                                <td colspan="6">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <h5>Donor Details</h5>
-                                            <p><strong>Email:</strong> <?php echo $donation['donor_email']; ?></p>
-                                            <p><strong>Contact:</strong> <?php echo $donation['donor_contact']; ?></p>
-                                            <p><strong>Address:</strong> <?php echo $donation['donor_address']; ?></p>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($result as $donation): ?>
+                                <tr data-toggle="collapse" data-target="#donation-details-<?= $donation['donation_no'] ?>" aria-expanded="false">
+                                    <td><?= $donation['donation_no'] ?></td>
+                                    <td><?= htmlspecialchars($donation['donor_name']) ?></td>
+                                    <td><?= htmlspecialchars($donation['recipient_name']) ?></td>
+                                    <td>৳<?= number_format($donation['donations_amount'], 2) ?></td>
+                                    <td><?= date('M j, Y', strtotime($donation['donation_date'])) ?></td>
+                                    <td>
+                                        <span class="badge <?= $donation['confirmation'] ? 'bg-success' : 'bg-warning' ?>">
+                                            <?= $donation['confirmation'] ? 'Confirmed' : 'Pending' ?>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <?php if (!$donation['confirmation']): ?>
+                                            <form method="POST" action="process_handling_donations.php" class="d-inline">
+                                                <input type="hidden" name="donation_no" value="<?= $donation['donation_no'] ?>">
+                                                <button type="submit" name="action" value="confirm" class="btn btn-success btn-sm">Confirm</button>
+                                                <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
+                                            </form>
+                                        <?php else: ?>
+                                            <span class="text-muted">Completed</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+
+                                <tr class="detail-row">
+                                    <td colspan="7" class="p-0">
+                                        <div id="donation-details-<?= $donation['donation_no'] ?>" class="collapse">
+                                            <div class="donation-details p-3 text-center">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <h5>Donor Information</h5>
+                                                        <div class="address-box text-center">
+                                                            <p><strong>Full Name:</strong> <?= htmlspecialchars($donation['donor_name']) ?></p>
+                                                            <p><strong>Email:</strong> <?= htmlspecialchars($donation['donor_email']) ?></p>
+                                                            <p><strong>Contact:</strong>
+                                                                <?= $donation['donor_contact'] ? htmlspecialchars($donation['donor_contact']) : '<span class="text-muted">Not provided</span>' ?>
+                                                            </p>
+                                                            <p><strong>Address:</strong></p>
+                                                            <?= $donation['donor_address'] ? nl2br(htmlspecialchars($donation['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <h5>Recipient Information</h5>
+                                                        <div class="address-box text-center">
+                                                            <p><strong>Full Name:</strong> <?= htmlspecialchars($donation['recipient_name']) ?></p>
+                                                            <p><strong>Email:</strong> <?= htmlspecialchars($donation['recipient_email']) ?></p>
+                                                            <p><strong>Contact:</strong>
+                                                                <?= $donation['recipient_contact'] ? htmlspecialchars($donation['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?>
+                                                            </p>
+                                                            <p><strong>Address:</strong></p>
+                                                            <?= $donation['recipient_address'] ? nl2br(htmlspecialchars($donation['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 mt-3">
+                                                        <h5>Recipient's Reason For Asking Donation:</h5>
+                                                        <div class="address-box text-center">
+                                                            <?= $donation['cause'] ? nl2br(htmlspecialchars($donation['cause'])) : '<p class="text-muted">No cause description provided</p>' ?>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <?php if ($donation['confirmation']): ?>
+                                                    <div class="row mt-3">
+                                                        <div class="col-12">
+                                                            <div class="alert alert-success text-center">
+                                                                <i class="fas fa-check-circle"></i> This donation was confirmed on <?= date('F j, Y \a\t g:i a', strtotime($donation['donation_date'])) ?>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <h5>Recipient Details</h5>
-                                            <p><strong>Email:</strong> <?php echo $donation['recipient_email']; ?></p>
-                                            <p><strong>Contact:</strong> <?php echo $donation['recipient_contact']; ?></p>
-                                            <p><strong>Address:</strong> <?php echo $donation['recipient_address']; ?></p>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
 
-            <!-- Optional: jQuery for smoother toggle (if Bootstrap JS not included) -->
-            <script>
-                document.querySelectorAll('.main-row').forEach(row => {
-                    row.addEventListener('click', () => {
-                        const target = document.getElementById(row.getAttribute('data-target').replace('#', ''));
-                        if (target.classList.contains('show')) {
-                            target.classList.remove('show');
-                        } else {
-                            target.classList.add('show');
-                        }
+                <style>
+                    .detail-row {
+                        background-color: #f8f9fa;
+                    }
+
+                    .donation-details {
+                        background-color: #f8f9fa;
+                        border-top: 1px solid #dee2e6;
+                    }
+
+                    .address-box {
+                        background-color: white;
+                        padding: 15px;
+                        border-radius: 5px;
+                        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                    }
+                </style>
+
+
+
+
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+                <!-- // fixing the toggle issue with dropdowns -->
+
+                <script>
+                    $(document).ready(function() {
+                        // Toggle detail rows
+                        $('tr[data-toggle="collapse"]').click(function() {
+                            $(this).next('tr').find('.collapse').collapse('toggle');
+                        });
+
+                        // Prevent dropdown button from collapsing detail row
+                        $('.btn').click(function(e) {
+                            e.stopPropagation();
+                        });
+
+                        // Close other dropdowns when one is opened
+                        $('.dropdown-toggle').on('click', function(e) {
+                            e.stopPropagation(); // Prevent event bubbling to document
+
+                            // Close any other open dropdowns
+                            $('.dropdown-menu.show').removeClass('show');
+
+                            // Toggle this one
+                            var $menu = $(this).next('.dropdown-menu');
+                            $menu.toggleClass('show');
+                        });
+
+                        // Close all dropdowns if clicked outside
+                        $(document).on('click', function() {
+                            $('.dropdown-menu.show').removeClass('show');
+                        });
                     });
-                });
-            </script>
-
-
-
-            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-            <!-- // fixing the toggle issue with dropdowns -->
-
-            <script>
-                $(document).ready(function() {
-                    // Toggle detail rows
-                    $('tr[data-toggle="collapse"]').click(function() {
-                        $(this).next('tr').find('.collapse').collapse('toggle');
-                    });
-
-                    // Prevent dropdown button from collapsing detail row
-                    $('.btn').click(function(e) {
-                        e.stopPropagation();
-                    });
-
-                    // Close other dropdowns when one is opened
-                    $('.dropdown-toggle').on('click', function(e) {
-                        e.stopPropagation(); // Prevent event bubbling to document
-
-                        // Close any other open dropdowns
-                        $('.dropdown-menu.show').removeClass('show');
-
-                        // Toggle this one
-                        var $menu = $(this).next('.dropdown-menu');
-                        $menu.toggleClass('show');
-                    });
-
-                    // Close all dropdowns if clicked outside
-                    $(document).on('click', function() {
-                        $('.dropdown-menu.show').removeClass('show');
-                    });
-                });
-            </script>
+                </script>
 
 </body>
 
