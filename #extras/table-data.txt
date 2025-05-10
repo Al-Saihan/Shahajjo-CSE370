@@ -203,10 +203,10 @@ INSERT INTO `donor_table` (`id`, `user_id`, `created_at`, `total_donations`, `la
 (5, 7, current_timestamp(), 0, NULL, 'Mirpur', '01612345678', current_timestamp());
 
 INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES 
-(8, 'Sharmin', 'Akter', 'Begum', 'r1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'unverified', 0, current_timestamp(), NULL),
-(9, 'Kamal', 'Hossain', 'Mia', 'r2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'unverified', 0, current_timestamp(), NULL),
+(8, 'Sharmin', 'Akter', 'Begum', 'r1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', 0, current_timestamp(), NULL),
+(9, 'Kamal', 'Hossain', 'Mia', 'r2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', 0, current_timestamp(), NULL),
 (10, 'Farhana', 'Yasmin', 'Rahman', 'r3@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'unverified', 0, current_timestamp(), NULL),
-(11, 'Arif', 'Ul', 'Islam', 'r4@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'unverified', 0, current_timestamp(), NULL);
+(11, 'Arif', 'Ul', 'Islam', 'r4@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', 0, current_timestamp(), NULL);
 
 INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_received`, `address`, `contact_number`, `cause`, `registration_date`) VALUES 
 (2, 8, current_timestamp(), 0, NULL, 'Baridhara', '01776543210', 'Need funds for daughter''s heart surgery', current_timestamp()),
