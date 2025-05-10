@@ -101,7 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
         }
     </style>
 </head>
-<body style="background: linear-gradient(to right,rgb(70, 51, 69),rgb(204, 205, 206));">
+<body style="background: linear-gradient(to right,rgb(102, 80, 101),rgb(204, 205, 206));">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-sakib">
         <div class="container"> 
