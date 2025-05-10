@@ -166,12 +166,11 @@ try {
 
         <h2 class="mb-4 d-flex justify-content-between align-items-center">
             User Management
-            <a href="add_admin.php" class="btn btn-danger btn-sm">Add Admin</a>
         </h2>
 
         <!-- SORTING HERE -->
 
-        <div class="d-flex justify-content-start mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
             <form method="GET" action="dashboard.php" class="d-flex align-items-center flex-wrap gap-2">
                 <div class="d-flex align-items-center">
                     <label for="sort_by" class="form-label mb-0 me-2">Sort By:</label>
@@ -192,15 +191,17 @@ try {
                     </select>
                 </div>
             </form>
+            <a href="add_admin.php" class="btn btn-danger btn-sm">Add Admin</a>
         </div>
 
         <!-- SORTING END -->
 
 
-        <div class="table-container"> <!-- Added table-container class -->
+        <div class="table-container" style="border: 2px solid gray;"> <!-- Added table-container class -->
             <div class="table-responsive">
                 <table class="table table-striped table-hover text-center">
-                    <tr class="table-dark">
+                    <thead
+                        <tr class="table-dark">
                         <th style="border: 1px solid #dee2e6;">ID</th>
                         <th style="border: 1px solid #dee2e6;">Name</th>
                         <th style="border: 1px solid #dee2e6;">Email</th>
@@ -208,7 +209,7 @@ try {
                         <th style="border: 1px solid #dee2e6;">Role</th>
                         <th style="border: 1px solid #dee2e6;">Joined</th>
                         <th style="border: 1px solid #dee2e6;">Actions</th>
-                    </tr>
+                        </tr>
                     </thead>
                     <tbody>
                         <?php foreach ($users as $user): ?>
@@ -242,11 +243,11 @@ try {
                                             $admin_name = '';
                                             try {
                                                 $stmt = $pdo->prepare("
-                                                    SELECT admin_table.admin_name 
-                                                    FROM user_table 
-                                                    INNER JOIN admin_table 
-                                                    ON user_table.admin_id = admin_table.admin_id 
-                                                    WHERE user_table.id = :user_id
+                                                SELECT admin_table.admin_name 
+                                                FROM user_table 
+                                                INNER JOIN admin_table 
+                                                ON user_table.admin_id = admin_table.admin_id 
+                                                WHERE user_table.id = :user_id
                                                 ");
                                                 $stmt->execute(['user_id' => $user['id']]);
                                                 $result = $stmt->fetch();
@@ -265,7 +266,7 @@ try {
                                 <td>
                                     <div>
                                         <!-- MANAGE BUTTON -->
-                                        <button class="btn btn-sm btn-warning dropdown-toggle border border-dark" type="button" id="manageDropdown<?= $user['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <button class="btn btn-sm btn-warning border border-dark" type="button" id="manageDropdown<?= $user['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
                                             Manage
                                         </button>
                                         <ul class="dropdown-menu bg-dark text-white" aria-labelledby="manageDropdown<?= $user['id'] ?>">
@@ -373,11 +374,11 @@ try {
                                                             <?php
                                                             try {
                                                                 $stmt = $pdo->prepare("
-                                                                    SELECT admin_table.admin_id, admin_table.access_level
-                                                                    FROM user_table
-                                                                    INNER JOIN admin_table
-                                                                    ON user_table.admin_id = admin_table.admin_id
-                                                                    WHERE user_table.id = :user_id
+                                                                SELECT admin_table.admin_id, admin_table.access_level
+                                                                FROM user_table
+                                                                INNER JOIN admin_table
+                                                                ON user_table.admin_id = admin_table.admin_id
+                                                                WHERE user_table.id = :user_id
                                                                 ");
                                                                 $stmt->execute(['user_id' => $user['id']]);
                                                                 $adminDetails = $stmt->fetch();
@@ -406,41 +407,211 @@ try {
             </div>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <div class="container my-5">
 
-        <!-- // fixing the toggle issue with dropdowns -->
+        <!-- DONATION MANAGEMENT -->
+            <h2 class="mb-4 d-flex justify-content-between align-items-center">
+                Donation Management
+            </h2>
 
-        <script>
-            $(document).ready(function() {
-                // Toggle detail rows
-                $('tr[data-toggle="collapse"]').click(function() {
-                    $(this).next('tr').find('.collapse').collapse('toggle');
+            <div class="table-container" style="border: 2px solid gray;"> <!-- Added table-container class -->
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover text-center">
+                        <tr class="table-dark">
+                            <th style="border: 1px solid #dee2e6;">ID</th>
+                            <th style="border: 1px solid #dee2e6;">Name</th>
+                            <th style="border: 1px solid #dee2e6;">Email</th>
+                            <th style="border: 1px solid #dee2e6;">Status</th>
+                            <th style="border: 1px solid #dee2e6;">Role</th>
+                            <th style="border: 1px solid #dee2e6;">Joined</th>
+                            <th style="border: 1px solid #dee2e6;">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($users as $user): ?>
+                                <tr data-toggle="collapse" data-target="#details-<?= $user['id'] ?>" aria-expanded="false" aria-controls="details-<?= $user['id'] ?>">
+                                    <td><?= $user['id'] ?></td>
+                                    <td>
+                                        <?= htmlspecialchars($user['first_name'] . ' ' . $user['last_name']) ?>
+                                        <?php if ($user['middle_name']): ?>
+                                            <br><small class="text-muted"><?= htmlspecialchars($user['middle_name']) ?></small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= htmlspecialchars($user['email']) ?></td>
+                                    <td>
+                                        <!-- <?= htmlspecialchars($user['status']) ?> -->
+                                        <span class="badge <?=
+                                                            $user['status'] === 'unverified' ? 'badge-unverified' : ($user['status'] === 'verified' ? 'badge-verified' : 'badge-blacklisted')
+                                                            ?>">
+                                            <?= ucfirst($user['status']) ?>
+                                    </td>
+                                    <td>
+                                        <span class="badge <?=
+                                                            $user['role'] === 'admin' ? 'badge-admin' : ($user['role'] === 'donor' ? 'badge-donor' : 'badge-recipient')
+                                                            ?>">
+                                            <?= ucfirst($user['role']) ?>
+                                        </span>
+                                        <br>
+                                        <span>
+                                            <?php if ($user['role'] === 'admin'): ?>
+                                                <?php
+                                                // Fetch admin_name for the admin user
+                                                $admin_name = '';
+                                                try {
+                                                    $stmt = $pdo->prepare("
+                                        SELECT admin_table.admin_name 
+                                        FROM user_table 
+                                        INNER JOIN admin_table 
+                                        ON user_table.admin_id = admin_table.admin_id 
+                                        WHERE user_table.id = :user_id
+                                        ");
+                                                    $stmt->execute(['user_id' => $user['id']]);
+                                                    $result = $stmt->fetch();
+                                                    if ($result) {
+                                                        $admin_name = $result['admin_name'];
+                                                    }
+                                                } catch (PDOException $e) {
+                                                    $admin_name = 'Error fetching name';
+                                                }
+                                                ?>
+                                                <span class="badge badge-admin"><?= htmlspecialchars($admin_name) ?></span>
+                                            <?php endif; ?>
+                                        </span>
+                                    </td>
+                                    <td><?= date('M j, Y', strtotime($user['created_at'])) ?></td>
+                                    <td>
+                                        <div>
+                                            <!-- MANAGE BUTTON -->
+                                            <button class="btn btn-sm btn-warning border border-dark" type="button" id="manageDropdown<?= $user['id'] ?>" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Manage
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr class="detail-row">
+                                    <td colspan="7" class="p-0">
+                                        <div id="details-<?= $user['id'] ?>" class="collapse">
+                                            <div class="user-details">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <h5>Basic Information</h5>
+                                                        <div class="address-box">
+
+                                                            <p><strong>Full Name:</strong>
+                                                                <?= htmlspecialchars($user['first_name'] . ' ' .
+                                                                    ($user['middle_name'] ? $user['middle_name'] . ' ' : '') .
+                                                                    $user['last_name']) ?>
+                                                            </p>
+                                                            <p><strong>Email:</strong> <?= htmlspecialchars($user['email']) ?></p>
+                                                            <?php if ($user['role'] !== 'admin'): ?>
+                                                                <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
+                                                            <?php endif; ?>
+
+                                                            <p><strong>Registration Date:</strong> <?= date('F j, Y, g:i a', strtotime($user['created_at'])) ?></p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-6">
+
+                                                        <?php if ($user['role'] === 'donor'): ?>
+                                                            <h5>Contact Information</h5>
+
+                                                            <div class="address-box">
+                                                                <p><strong>Address:</strong></p>
+                                                                <?= $user['donor_address'] ? nl2br(htmlspecialchars($user['donor_address'])) : '<p class="text-muted">Not provided</p>' ?>
+                                                            </div>
+                                                            <div class="address-box">
+                                                                <p><strong>Phone Number:</strong></p>
+                                                                <?= $user['donor_contact'] ? htmlspecialchars($user['donor_contact']) : '<span>Not provided</span>' ?></p>
+                                                            </div>
+
+                                                        <?php elseif ($user['role'] === 'recipient'): ?>
+                                                            <h5>Contact Information</h5>
+
+                                                            <div class="address-box">
+                                                                <p><strong>Address:</strong></p>
+                                                                <?= $user['recipient_address'] ? nl2br(htmlspecialchars($user['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
+                                                            </div>
+                                                            <div class="address-box">
+                                                                <p><strong>Phone Number:</strong></p>
+                                                                <?= $user['recipient_contact'] ? htmlspecialchars($user['recipient_contact']) : '<span>Not provided</span>' ?></p>
+                                                            </div>
+
+                                                        <?php else: ?>
+                                                            <h5>Administration Information</h5>
+
+                                                            <div class="address-box">
+                                                                <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
+                                                                <?php
+                                                                try {
+                                                                    $stmt = $pdo->prepare("
+                                                        SELECT admin_table.admin_id, admin_table.access_level
+                                                        FROM user_table
+                                                        INNER JOIN admin_table
+                                                        ON user_table.admin_id = admin_table.admin_id
+                                                        WHERE user_table.id = :user_id
+                                                        ");
+                                                                    $stmt->execute(['user_id' => $user['id']]);
+                                                                    $adminDetails = $stmt->fetch();
+                                                                    if ($adminDetails) {
+                                                                        echo '<p><strong>Admin ID:</strong> ' . htmlspecialchars($adminDetails['admin_id']) . '</p>';
+                                                                        echo '<p><strong>Access Level:</strong> ' . htmlspecialchars(ucwords(str_replace('_', ' ', $adminDetails['access_level']))) . '</p>';
+                                                                    } else {
+                                                                        echo '<p class="text-muted">Admin details not found</p>';
+                                                                    }
+                                                                } catch (PDOException $e) {
+                                                                    echo '<p class="text-danger">Error fetching admin details</p>';
+                                                                }
+                                                                ?>
+                                                            </div>
+
+                                                        <?php endif; ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+            <!-- // fixing the toggle issue with dropdowns -->
+
+            <script>
+                $(document).ready(function() {
+                    // Toggle detail rows
+                    $('tr[data-toggle="collapse"]').click(function() {
+                        $(this).next('tr').find('.collapse').collapse('toggle');
+                    });
+
+                    // Prevent dropdown button from collapsing detail row
+                    $('.btn').click(function(e) {
+                        e.stopPropagation();
+                    });
+
+                    // Close other dropdowns when one is opened
+                    $('.dropdown-toggle').on('click', function(e) {
+                        e.stopPropagation(); // Prevent event bubbling to document
+
+                        // Close any other open dropdowns
+                        $('.dropdown-menu.show').removeClass('show');
+
+                        // Toggle this one
+                        var $menu = $(this).next('.dropdown-menu');
+                        $menu.toggleClass('show');
+                    });
+
+                    // Close all dropdowns if clicked outside
+                    $(document).on('click', function() {
+                        $('.dropdown-menu.show').removeClass('show');
+                    });
                 });
-
-                // Prevent dropdown button from collapsing detail row
-                $('.btn').click(function(e) {
-                    e.stopPropagation();
-                });
-
-                // Close other dropdowns when one is opened
-                $('.dropdown-toggle').on('click', function(e) {
-                    e.stopPropagation(); // Prevent event bubbling to document
-
-                    // Close any other open dropdowns
-                    $('.dropdown-menu.show').removeClass('show');
-
-                    // Toggle this one
-                    var $menu = $(this).next('.dropdown-menu');
-                    $menu.toggleClass('show');
-                });
-
-                // Close all dropdowns if clicked outside
-                $(document).on('click', function() {
-                    $('.dropdown-menu.show').removeClass('show');
-                });
-            });
-        </script>
+            </script>
 
 </body>
 

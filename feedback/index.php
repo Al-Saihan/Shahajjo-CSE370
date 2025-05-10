@@ -1,11 +1,5 @@
 <?php
 require_once __DIR__ . '/../includes/config.php';
-require_once __DIR__ . '/../includes/access_check.php';
-
-if ($_SESSION['role'] !== 'recipient') {
-    header("Location: ../unauthorized.php");
-    exit();
-}
 
 try {
     $stmt = $pdo->prepare("
@@ -31,6 +25,7 @@ try {
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>All Feedbacks | Shahajjo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,26 +35,32 @@ try {
             color: gold;
             font-size: 1.2rem;
         }
+
         .feedback-table {
             background-color: white;
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .table-header {
             background-color: rgb(44, 7, 87);
             color: white;
         }
+
         body {
             background: linear-gradient(to right, rgb(104, 91, 153), rgb(204, 205, 206));
         }
+
         .bg-foot {
-            background-color:rgb(44, 7, 87);
+            background-color: rgb(44, 7, 87);
         }
+
         .btn-bt {
-            background-color:rgb(95, 83, 109); 
+            background-color: rgb(95, 83, 109);
         }
     </style>
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(60, 50, 65, 0.6);">
         <div class="container">
@@ -99,9 +100,9 @@ try {
                                             <tr>
                                                 <td>
                                                     <?= htmlspecialchars(
-                                                        $feedback['first_name'] . ' ' . 
-                                                        ($feedback['middle_name'] ? $feedback['middle_name'] . ' ' : '') . 
-                                                        ($feedback['last_name'] ?? '')
+                                                        $feedback['first_name'] . ' ' .
+                                                            ($feedback['middle_name'] ? $feedback['middle_name'] . ' ' : '') .
+                                                            ($feedback['last_name'] ?? '')
                                                     ) ?>
                                                 </td>
                                                 <td>
@@ -132,4 +133,5 @@ try {
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
