@@ -64,7 +64,7 @@ CREATE TABLE savings_account (
   recipient_uid INT(11) NOT NULL,
   money DECIMAL(10,2) DEFAULT 0.00,
   created_at DATE DEFAULT CURRENT_DATE,
-  time_limit INT, -- Will store days account has been active
+  time_limit INT,
   FOREIGN KEY (recipient_uid) REFERENCES recipient_table(id)
 );
 
