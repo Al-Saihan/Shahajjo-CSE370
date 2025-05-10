@@ -29,7 +29,8 @@ try {
         SELECT
             r.id AS recipient_table_id,
             u.id, u.first_name, u.middle_name, u.last_name, u.email, u.status,
-            r.address AS recipient_address, r.contact_number AS recipient_contact, r.user_id AS recipient_id
+            r.address AS recipient_address, r.contact_number AS recipient_contact, r.user_id AS recipient_id,
+            r.wallet AS wallet, r.cause AS cause
         FROM user_table u
         LEFT JOIN recipient_table r ON u.id = r.user_id
         WHERE u.status = 'verified' AND u.role = 'recipient'
@@ -45,9 +46,11 @@ try {
     <title>Donate | Shahajjo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        .profile-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .user-details {
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
         }
         .info-box {
             background: #f8f9fa;
@@ -55,9 +58,15 @@ try {
             padding: 20px;
             margin-bottom: 20px;
         }
-        .custom-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        .detail-row {
+            background-color: #f8f9fa;
+        }
+        .address-box {
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -111,6 +120,48 @@ try {
             </form>
         </td>
     </tr>
+    <tr class="detail-row">
+    <td colspan="7" class="p-0">
+        <div id="details-<?= $recipient['recipient_table_id'] ?>" class="collapse">
+            <div class="user-details p-4 border-top">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Basic Information</h5>
+                        <div class="address-box">
+                            <p><strong>Full Name:</strong>
+                                <?= htmlspecialchars($recipient['first_name'] . ' ' .
+                                    ($recipient['middle_name'] ? $recipient['middle_name'] . ' ' : '') .
+                                    $recipient['last_name']) ?>
+                            </p>
+                            <p><strong>Email:</strong> <?= htmlspecialchars($recipient['email']) ?></p>
+                            <p><strong>Wallet:</strong>
+                                <?= $recipient['wallet'] ? htmlspecialchars($recipient['wallet']) : '<span class="text-muted">Not provided</span>' ?>
+                            </p>
+                            <p><strong>Cause:</strong>
+                                <?= $recipient['cause'] ? htmlspecialchars($recipient['cause']) : '<span class="text-muted">Not provided</span>' ?>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Contact Information</h5>
+                        <div class="address-box">
+                            <p><strong>Address:</strong></p>
+                            <?= $recipient['recipient_address']
+                                ? nl2br(htmlspecialchars($recipient['recipient_address']))
+                                : '<p class="text-muted">Not provided</p>' ?>
+                        </div>
+                        <div class="address-box">
+                            <p><strong>Phone Number:</strong></p>
+                            <?= $recipient['recipient_contact']
+                                ? htmlspecialchars($recipient['recipient_contact'])
+                                : '<span class="text-muted">Not provided</span>' ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>
 <?php endforeach; ?>
                 </tbody>
             </table>

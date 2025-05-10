@@ -406,19 +406,6 @@ try {
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- <script>
-            $(document).ready(function() {
-                // Make rows clickable to toggle details
-                $('tr[data-toggle="collapse"]').click(function() {
-                    $(this).next('tr').find('.collapse').collapse('toggle');
-                });
-
-                // Prevent action buttons from triggering row collapse
-                $('.btn').click(function(e) {
-                    e.stopPropagation();
-                });
-            });
-        </script> -->
 
         <!-- // fixing the toggle issue with dropdowns -->
 
