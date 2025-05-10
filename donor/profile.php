@@ -7,6 +7,8 @@ if ($_SESSION['role'] !== 'donor') {
     header("Location: ../unauthorized.php");
     exit();
 }
+
+
 // Get donor data
 try {
     $stmt = $pdo->prepare("
@@ -46,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -59,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .custom-card {
         border-radius: 10px;
         box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
+        }
         .info-box {
             background: #f8f9fa;
             border-radius: 8px;
@@ -103,10 +106,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </a>
                 </div>
             </div>
+            <!-- Rate Us Button -->
+            <div class="text-start px-2 mt-3">
+                <div class="card-body text-center">
+                    <button class="btn btn-warning custom-card" style="width: 150px; height: 60px; font-size: 1.7rem;" data-bs-toggle="modal" data-bs-target="#rateUsModal">
+                        Rate Us
+                    </button>
+                </div>
+            </div>
         </div>
-
             <div class="col-md-8">
                 <?php if (isset($_SESSION['profile_update'])): ?>
+                <?php if (isset($_SESSION['feedback_success'])): ?>
+                    <div class="alert alert-success"><?= $_SESSION['feedback_success']; ?></div>
+                    <?php unset($_SESSION['feedback_success']); ?>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['feedback_error'])): ?>
+                    <div class="alert alert-danger"><?= $_SESSION['feedback_error']; ?></div>
+                    <?php unset($_SESSION['feedback_error']); ?>
+                <?php endif; ?>
                     <div class="alert alert-success">
                         <?= $_SESSION['profile_update'] ?>
                     </div>
@@ -114,6 +132,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php endif; ?>
 
                 <div class="card profile-card">
+
+                    <?php if (isset($_SESSION['feedback_success'])): ?>
+                        <div class="alert alert-success"><?= $_SESSION['feedback_success']; ?></div>
+                        <?php unset($_SESSION['feedback_success']); ?>
+                    <?php endif; ?>
+
+                    <?php if (isset($_SESSION['feedback_error'])): ?>
+                        <div class="alert alert-danger"><?= $_SESSION['feedback_error']; ?></div>
+                        <?php unset($_SESSION['feedback_error']); ?>
+                    <?php endif; ?>
+                    
                     <div class="card-header bg-primary text-white">
                         <h4>My Information</h4>
                     </div>
@@ -148,5 +177,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+
+    
+        <!-- Rate Us Modal -->
+    <div class="modal fade" id="rateUsModal" tabindex="-1" aria-labelledby="rateUsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="process_feedback.php" method="POST" class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="rateUsModalLabel">Rate Shahajjo</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">
+            <label class="form-label">Your Rating (1 to 5)</label>
+            <select class="form-select" name="stars" required>
+                <option value="">Select rating</option>
+                <option value="1">★☆☆☆☆ (1 star - Poor)</option>
+                <option value="2">★★☆☆☆ (2 stars - Fair)</option>
+                <option value="3">★★★☆☆ (3 stars - Good)</option>
+                <option value="4">★★★★☆ (4 stars - Very Good)</option>
+                <option value="5">★★★★★ (5 stars - Excellent)</option>
+            </select>
+            </div>
+            <div class="mb-3">
+            <label class="form-label">Feedback</label>
+            <textarea class="form-control" name="feedback" rows="4" placeholder="Write your thoughts here..." required></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+        </form>
+    </div>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Bootstrap tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        });
+    </script>
 </body>
 </html>
