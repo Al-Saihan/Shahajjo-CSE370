@@ -227,4 +227,15 @@ INSERT INTO feedback_table (uid, review, posting_date, stars) VALUES
 (9, 'I applied but never got any response. Disappointed with the lack of communication.', '2025-05-10', 1),
 (10, 'They promised help, but the form kept crashing. No way to follow up.', '2025-05-11', 2);
 
+--18. Withdrawal log TABLE
+CREATE TABLE savings_withdrawal_log (
+  withdrawal_id INT(11) NOT NULL AUTO_INCREMENT,
+  account_no INT(11) NOT NULL,
+  amount DECIMAL(10,2) NOT NULL,
+  withdrawal_method ENUM('bkash', 'nagad', 'upay', 'rocket', 'bank_transfer') NOT NULL,
+  transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (withdrawal_id),
+  KEY account_no (account_no)
+);
+
 -- FINISH

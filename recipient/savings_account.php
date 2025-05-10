@@ -202,43 +202,48 @@ try {
                         </div>
                     </div>
 
-                    <!-- Withdrawal History -->
+                    <!-- Withdrawal log -->
+                    <!-- In the Withdrawal log section, replace the entire table with this: -->
                     <div class="row mb-4 bg-dp p-3 rounded">
                         <h3>Withdrawal Log</h3>
                         <?php
-                    $stmt = $pdo->prepare("SELECT w.* FROM savings_withdrawal_log w
-                        JOIN savings_account s ON w.account_no = s.account_no
-                        WHERE s.recipient_uid = ?
-                        ORDER BY w.transaction_date DESC");
-                    $stmt->execute([$recipient['id']]);
+                        $stmt = $pdo->prepare("SELECT w.withdrawal_id, w.account_no, w.amount, w.withdrawal_method, w.transaction_date 
+                            FROM savings_withdrawal_log w
+                            JOIN savings_account s ON w.account_no = s.account_no
+                            WHERE s.recipient_uid = ?
+                            ORDER BY w.transaction_date DESC");
+                        $stmt->execute([$recipient['id']]);
 
                         $withdrawals = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         
                         if (empty($withdrawals)): ?>
                             <p>No withdrawal history found.</p>
                         <?php else: ?>
-                            <table class="table">
-                                <thead>
+                            <table class="table table-striped table-hover table-bordered bg-dark_pink text-white rounded">
+                                <thead class="table-dark">
                                     <tr>
                                         <th>Date</th>
                                         <th>Amount</th>
                                         <th>Method</th>
-                                        <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php foreach ($withdrawals as $withdrawal): ?>
                                     <tr>
                                         <td><?php echo date('M j, Y g:i A', strtotime($withdrawal['transaction_date'])); ?></td>
-                                        <td><?php echo number_format($withdrawal['amount'], 2); ?> BDT</td>
+                                        <td>৳<?php echo number_format($withdrawal['amount'], 2); ?></td>
                                         <td><?php echo ucfirst($withdrawal['withdrawal_method']); ?></td>
-                                        <td><?php echo ucfirst($withdrawal['status']); ?></td>
                                     </tr>
                                     <?php endforeach; ?>
                                 </tbody>
                             </table>
                         <?php endif; ?>
                     </div>
+                    <style>
+                        .bg-sakib {
+                            background-color:rgba(60, 50, 65, 0.6); /* Custom color (Hex) */
+                        }
+                    </style>
                     <div class="text-center mt-4">
                         <a href="profile.php" class="btn btn-pp">Back to Profile</a>
                     </div>
@@ -272,7 +277,7 @@ try {
                             <option value="Nagad">Nagad</option>
                             <option value="Rocket">Rocket</option>
                             <option value="Upay">Upay</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Bank_Transfer">Bank Transfer</option>
                         </select>
                     </div>
                     <input type="hidden" name="account_no" value="<?= $account['account_no'] ?>">
@@ -310,7 +315,7 @@ try {
                             <option value="Nagad">Nagad</option>
                             <option value="Rocket">Rocket</option>
                             <option value="Upay">Upay</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="Bank_Transfer">Bank Transfer</option>
                         </select>
                     </div>
                     <input type="hidden" name="account_no" value="<?= $account['account_no'] ?>">
