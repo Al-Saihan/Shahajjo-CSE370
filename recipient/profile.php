@@ -24,6 +24,7 @@ try {
 
 // Handle profile updates
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $income = $_POST['income'] ?? '';
     $address = $_POST['address'] ?? '';
     $contact = $_POST['contact_number'] ?? '';
     $cause = $_POST['cause'] ?? '';
@@ -32,10 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $stmt = $pdo->prepare("
             UPDATE recipient_table 
-            SET address = ?, contact_number = ?, cause = ?
+            SET income = ?, address = ?, contact_number = ?, cause = ?
             WHERE user_id = ?
         ");
-        $stmt->execute([$address, $contact, $cause, $_SESSION['user_id']]);
+        $stmt->execute([$income, $address, $contact, $cause, $_SESSION['user_id']]);
         
         // Mark profile as complete
         $stmt = $pdo->prepare("UPDATE user_table SET profile_complete = TRUE WHERE id = ?");
@@ -47,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } catch (PDOException $e) {
         $error = "Failed to update profile: " . $e->getMessage();
     }
+    
 }
 ?>
 <!DOCTYPE html>
@@ -68,13 +70,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </style>
 </head>
 <body style="background: linear-gradient(to right,rgb(151, 128, 149),rgb(204, 205, 206));">
-<head>
+
     <style>
         .bg-sakib {
             background-color:rgba(60, 50, 65, 0.6); /* Custom color (Hex) */
         }
     </style>
-</head>
+
     <nav class="navbar navbar-expand-lg navbar-dark bg-sakib">
         <div class="container"> 
             <a class="navbar-brand fs-2 fw-bold" href="../index.php">Shahajjo</a>
@@ -82,22 +84,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span class="navbar-text me-3">
                     Recipient ID: <?= $recipient['id'] ?>
                 </span>
-                <a class="nav-link" href="../process_logout.php">Logout</a>
+                <a class="nav-link" href="../logout.php">Logout</a>
             </div>
         </div>
     </nav>
 
     <div class="container py-5">
         <div class="row">
-        <head>
                 <style>
                     .bg-pink {
                         background-color:rgba(255, 255, 255, 0.24); /* Custom color (Hex) */
                     }
                 </style>
-            </head>
             <div class="col-md-4">
                 <div class="card profile-card mb-4 bg-pink">
+            
                     <div class="card-body text-center">
                         <h4><?= htmlspecialchars($recipient['first_name'].' '.$recipient['last_name']) ?></h4>
                         <p class="text-muted">Recipient Profile</p>
@@ -106,6 +107,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?= date('F j, Y', strtotime($recipient['registration_date'])) ?></p>
                     </div>
                 </div>
+
+                <!-- wallet -->
+
                 <div class="card profile-card mb-4 bg-pink">
                     <div class="card-body text-center">
                         <h4><?= htmlspecialchars($recipient['first_name'] . "'s") ?></h4>
@@ -122,25 +126,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php endif; ?>
                     </div>
                 </div>
+
+                <!-- savings -->
+
                 <div class="card profile-card mb-4 bg-pink">
-                    <div class="card-body text-center">
-                        <h4><?= htmlspecialchars($recipient['first_name'] . "'s") ?></h4>
-                        <p class="fw-bold fs-10 text-success">Wallet                       
+                    <div class="card-body text-center">                       
+                        <a href="savings_account.php" class="btn btn-pp btn-bg">My Account</a>
                         <hr>
-                        <p class="fw-bold fs-1 text-success">৳
-                        <?= number_format($recipient['wallet'], 2) ?></p>
-                        <hr>
-                        <p class="fw-bold fs-20 text-dark">Last Received
-                        <?php if ($recipient['last_received'] === null): ?>
-                        <h4>---</h4>
-                        <?php else: ?>
-                            <h4><?= htmlspecialchars($recipient['last_received']) ?></h4>
-                        <?php endif; ?>
+                        <a href="create_savings_account.php" class="btn btn-pp btn-bg">Create an Account</a>                           
                     </div>
                 </div>
 
             </div>
-
             <div class="col-md-8">
                 <?php if (isset($_SESSION['profile_update'])): ?>
                     <div class="alert alert-success">
@@ -148,28 +145,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <?php unset($_SESSION['profile_update']); ?>
                 <?php endif; ?>
-                <head>
+                
+                <!-- if account already exists -->
+                <?php if (isset($_SESSION['account_message'])): ?>
+                    <div class="alert alert-info">
+                        <?= $_SESSION['account_message'] ?>
+                    </div>
+                    <?php unset($_SESSION['account_message']); ?>
+                <?php endif; ?>
+
                 <style>
                     .bg-dark_pink {
-                        background-color:rgba(61, 17, 55, 0.58); /* Custom color (Hex) */
+                        background-color:rgba(61, 17, 55, 0.58); 
                     }
                 </style>
-            </head>
                 <div class="card profile-card bg-pink">
                     <div class="card-header bg-dark_pink text-light">
                         <h4>My Profile</h4>
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                        <head>
+
                             <style>
                                 .bg-dp {
-                                    background-color:rgba(61, 17, 55, 0.35); /* Custom color (Hex) */
+                                    background-color:rgba(61, 17, 55, 0.35); 
                                 }
                             </style>
-                        </head>
+
                             <div class="needs-box mb-4 bg-dp">
-                                <h5>Contact Information</h5>
+                                <h5>Personal Information</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Total Income</label>
+                                    <input type="number" class="form-control" name="income" 
+                                           value="<?= htmlspecialchars($recipient['income'] ?? '') ?>" required>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control" value="<?= htmlspecialchars($recipient['email']) ?>" readonly>
@@ -180,7 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                            value="<?= htmlspecialchars($recipient['contact_number'] ?? '') ?>" required>
                                 </div>
                             </div>
-
                             <div class="needs-box bg-dp">
                                 <h5>Address Details</h5>
                                 <div class="mb-3">
@@ -197,14 +205,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     ?></textarea>
                                 </div>
                             </div>
-                            <head>
                             <style>
                                 .btn-pp {
                                     background-color:rgba(61, 17, 55, 0.35); /* Custom color (Hex) */
                                 }
                             </style>
-                        <hr>
-                        </head>                         
+                        <hr>                        
                             <button type="submit" class="btn btn-pp mt-3">Update Profile</button>                            
                         </form>
                     </div>
