@@ -28,19 +28,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
     $income = $_POST['income'] ?? '';
     $address = $_POST['address'] ?? '';
     $contact = $_POST['contact_number'] ?? '';
-    
+
     try {
         $stmt = $pdo->prepare("
             UPDATE donor_table 
-            SET address = ?, contact_number = ?
+            SET income = ?, address = ?, contact_number = ?
             WHERE user_id = ?
         ");
-        $stmt->execute([$address, $contact, $_SESSION['user_id']]);
-        
-        // Mark profile as complete
+        $stmt->execute([$income, $address, $contact, $_SESSION['user_id']]);
+
         $stmt = $pdo->prepare("UPDATE user_table SET profile_complete = TRUE WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
-        
+
         $_SESSION['profile_update'] = "Profile updated successfully!";
         header("Location: profile.php");
         exit();
@@ -161,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                                 <div class="mb-3">
                                     <label class="form-label">Total Income (yearly)</label>
                                     <input type="number" class="form-control" name="income" 
-                                           value="<?= htmlspecialchars($recipient['income'] ?? '') ?>" required>
+                                           value="<?= htmlspecialchars($donor['income'] ?? '') ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
