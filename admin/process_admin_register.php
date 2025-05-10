@@ -11,6 +11,12 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Check admin role
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../unauthorized.php");
+    exit();
+}
+
 // Initialize session variables
 $_SESSION['register_errors'] = [];
 $_SESSION['register_data'] = $_POST;

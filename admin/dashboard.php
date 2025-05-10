@@ -297,20 +297,22 @@ try {
                                                 </form>
                                             </li>
 
-                                            <!-- CHANGE ROLE SECTION -->
-                                            <li>
-                                                <form action="change_role.php" method="POST" style="margin: 0;">
-                                                    <?php if ($user['id'] === $admin_id): ?>
-                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot change your own Role</div>
-                                                        <!-- CHECK IF CURRENTE ADMIN IS SUPER ADMIN -->
-                                                    <?php elseif ($admin['access_level'] !== 'super_admin'): ?>
-                                                        <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Only Super Admin can change roles</div>
-                                                    <?php else: ?>
-                                                        <input type="hidden" name="user_id" value="<?= $user['id'] ?>">
-                                                        <button type="submit" class="dropdown-item text-white bg-dark border-bottom border-secondary">Change Role</button>
-                                                    <?php endif; ?>
-                                                </form>
-                                            </li>
+                                            <!-- CHANGE ACCESS LEVEL SECTION -->
+                                            <?php if ($user['admin_id'] !== null): ?>
+                                                <li>
+                                                    <form action="process_access_level.php" method="POST" style="margin: 0;">
+                                                        <?php if ($user['id'] === $admin_id): ?>
+                                                            <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">You cannot change your own Access Level</div>
+                                                            <!-- CHECK IF CURRENT ADMIN IS SUPER ADMIN -->
+                                                        <?php elseif ($admin['access_level'] !== 'super_admin'): ?>
+                                                            <div class="dropdown-item text-danger bg-dark border-bottom border-secondary">Only Super Admin can change Access Level</div>
+                                                        <?php else: ?>
+                                                            <input type="hidden" name="user_id" value="<?= $user['admin_id'] ?>">
+                                                            <button type="submit" class="dropdown-item text-white bg-dark border-bottom border-secondary">Change Access Level</button>
+                                                        <?php endif; ?>
+                                                    </form>
+                                                </li>
+                                            <?php endif; ?>
                                         </ul>
                                     </div>
                                 </td>
