@@ -84,11 +84,13 @@ CREATE TABLE organization_table (
 -- 7. TOTAL_DONATIONS - Stores total donation records
 CREATE TABLE total_donations (
   donor_id INT(11),
+  recipient_id INT(11),
   donation_no INT PRIMARY KEY,
   donations_amount DECIMAL(10,2),
   donation_date DATE,
   confirmation BOOLEAN,
-  FOREIGN KEY (donor_id) REFERENCES donor_table(id)
+  FOREIGN KEY (donor_id) REFERENCES donor_table(id),
+  FOREIGN KEY (recipient_id) REFERENCES recipient_table(id)
 );
 
 
