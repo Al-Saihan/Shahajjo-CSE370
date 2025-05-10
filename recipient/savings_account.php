@@ -94,7 +94,7 @@ try {
             <span class="navbar-text me-3">
                 Recipient ID: <?= $recipient['id'] ?>
             </span>
-            <a class="nav-link" href="../logout.php">Logout</a>
+            <a class="nav-link" href="../process_logout.php">Logout</a>
         </div>
     </div>
 </nav>
