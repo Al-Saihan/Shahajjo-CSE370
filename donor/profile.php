@@ -24,7 +24,8 @@ try {
 }
 
 // Handle profile updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
+    $income = $_POST['income'] ?? '';
     $address = $_POST['address'] ?? '';
     $contact = $_POST['contact_number'] ?? '';
     
@@ -54,10 +55,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <title>Donor Profile | Shahajjo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .profile-card {
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .needs-box {
+            background:rgba(32, 144, 185, 0.82);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
         .custom-card {
         border-radius: 10px;
@@ -142,14 +150,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="alert alert-danger"><?= $_SESSION['feedback_error']; ?></div>
                         <?php unset($_SESSION['feedback_error']); ?>
                     <?php endif; ?>
-                    
+
                     <div class="card-header bg-primary text-white">
-                        <h4>My Information</h4>
+                        <h4>My Profile</h4>
                     </div>
                     <div class="card-body">
                         <form method="POST">
-                            <div class="info-box mb-4">
-                                <h5>Contact Information</h5>
+                            <div class="needs-box mb-4 bg-dp">
+                                <h5>Personal Information</h5>
+                                <div class="mb-3">
+                                    <label class="form-label">Total Income (yearly)</label>
+                                    <input type="number" class="form-control" name="income" 
+                                           value="<?= htmlspecialchars($recipient['income'] ?? '') ?>" required>
+                                </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
                                     <input type="email" class="form-control" value="<?= htmlspecialchars($donor['email']) ?>" readonly>
@@ -161,16 +174,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
 
-                            <div class="info-box">
-                                <h5>Address</h5>
+                            <div class="needs-box bg-dp">
+                                <h5>Address Details</h5>
                                 <div class="mb-3">
                                     <textarea class="form-control" name="address" rows="4" required><?= 
                                         htmlspecialchars($donor['address'] ?? '') 
                                     ?></textarea>
                                 </div>
                             </div>
-
-                            <button type="submit" class="btn btn-primary mt-3">Update Profile</button>
+                            <hr>
+                            <button type="submit" class="btn btn-primary mt-3 fw-bold">Update Profile</button>
                         </form>
                     </div>
                 </div>
