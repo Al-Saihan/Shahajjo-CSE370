@@ -1,0 +1,138 @@
+DROP DATABASE IF EXISTS shahajjo_db;
+CREATE DATABASE shahajjo_db;
+USE shahajjo_db;
+
+-- 1. ADMIN_TABLE - Stores admin credentials and access levels
+CREATE TABLE admin_table (
+  admin_id INT(11) PRIMARY KEY AUTO_INCREMENT,
+  admin_name VARCHAR(255),
+  access_level ENUM('super_admin', 'moderator') NOT NULL DEFAULT 'moderator'
+);
+
+-- 2. USER_TABLE - Stores user information with roles and statuses
+CREATE TABLE user_table (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(50) NOT NULL,
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('donor', 'recipient', 'admin') DEFAULT NULL,
+    status ENUM('verified', 'unverified', 'blacklisted') NOT NULL DEFAULT 'unverified',
+    profile_complete TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    -- ADMIN FOREIGN KEY, IS BELOW AT TITLE 13
+);
+
+-- 3. DONOR_TABLE - Stores donor-specific details and donations history
+CREATE TABLE donor_table (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    user_id INT(11) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    total_donations INT(11) DEFAULT 0,
+    last_donation DATE,
+    address TEXT,
+    contact_number VARCHAR(20),
+    registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_table(id)
+);
+
+-- 4. RECIPIENT_TABLE - Stores recipient-specific details and received donations history
+CREATE TABLE recipient_table (
+    id INT(11) PRIMARY KEY AUTO_INCREMENT,
+    user_id INT(11) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    wallet FLOAT(10,2) DEFAULT 0.00,
+    last_received DATE,
+    address TEXT,
+    contact_number VARCHAR(20),
+    cause TEXT,
+    registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user_table(id)
+);
+
+-- 5. SAVING_ACCOUNT - Stores saving account details for recipients
+CREATE TABLE saving_account (
+  recipient_uid INT(11),
+  account_no VARCHAR(10) PRIMARY KEY,
+  time_limit DATE,
+  money DECIMAL(10,2),
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(id)
+);
+
+-- 6. ORGANIZATION_TABLE - Stores organization details for donations
+CREATE TABLE organization_table (
+  org_bin INT PRIMARY KEY,
+  name VARCHAR(255),
+  branch VARCHAR(255),
+  account VARCHAR(10)
+);
+
+-- 7. TOTAL_DONATIONS - Stores total donation records
+CREATE TABLE total_donations (
+  donor_id INT(11),
+  donation_no INT PRIMARY KEY,
+  donations_amount DECIMAL(10,2),
+  donation_date DATE,
+  confirmation BOOLEAN,
+  FOREIGN KEY (donor_id) REFERENCES donor_table(id)
+);
+
+-- 8. RECEIVES - Stores details about the recipient receiving the donation
+CREATE TABLE receives (
+  donation_no INT,
+  recipient_uid INT(11),
+  org_bin INT,
+  donation_date DATE,
+  donation_amount DECIMAL(10,2),
+  PRIMARY KEY (donation_no, recipient_uid, org_bin),
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no),
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(id),
+  FOREIGN KEY (org_bin) REFERENCES organization_table(org_bin)
+);
+
+-- 9. FINANCIAL_DONATIONS - Stores records of financial donations made
+CREATE TABLE financial_donations (
+  donation_no INT PRIMARY KEY,
+  money_amount DECIMAL(10,2),
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
+);
+
+-- 10. ESSENTIAL_NEEDS - Stores records of essential items donated
+CREATE TABLE essential_needs (
+  donation_no INT PRIMARY KEY,
+  item_name VARCHAR(255),
+  item_quantity INT,
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
+);
+
+-- 11. JAKAT_DONATION - Stores records of Jakat donations made
+CREATE TABLE jakat_donation (
+  donation_no INT PRIMARY KEY,
+  jakat_amount DECIMAL(10,2),
+  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
+);
+
+-- 12. FEEDBACK_TABLE - Stores user feedback and reviews
+CREATE TABLE feedback_table (
+  uid INT(11),
+  review TEXT,
+  posting_date DATE,
+  PRIMARY KEY (uid, posting_date),
+  FOREIGN KEY (uid) REFERENCES user_table(id)
+);
+
+-- 13. Creating REL between User and Admin
+ALTER TABLE user_table
+ADD COLUMN admin_id INT(11) NULL,
+ADD FOREIGN KEY (admin_id) REFERENCES admin_table(admin_id);
+
+-- 14. ADD MAIN SUPER_ADMIN
+INSERT INTO `admin_table`(`admin_id`, `admin_name`, `access_level`) VALUES ('1','PIEU','super_admin');
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES (1, 'Naruto', 'Dattebayo', 'Uzumaki', 'admin@gmail.com', '$2y$10$80bXmzydkJZkf9ElLIVapOSesOt.Y3EOi61m/aZpHpH8eMeEw4VFy', 'admin', 'verified', 0, current_timestamp(), 1);
+
+-- 15. ADDING DUMMY USER AND RECIPIENT
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES (2, 'Jawadul', 'Idur', 'Hoque', 'd@gmail.com', '$2y$10$dgtYKavxWYxH3zfF/Wm6j.8GkllitA4y0TtbRlbpCzDYSCqacIXZ.', 'donor', 'verified', 0, current_timestamp(), NULL);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES (3, 'Saif', 'Chodna', 'Uddin', 'r@gmail.com', '$2y$10$LBoZ/Jk6htpOe.uMZeVJ/ORmOqC3uD6XpWeihk6rv4sQF/DJFfetS', 'recipient', 'unverified', 0, current_timestamp(), NULL);
+INSERT INTO `donor_table` (`id`, `user_id`, `created_at`, `total_donations`, `last_donation`, `address`, `contact_number`, `registration_date`) VALUES (1, 2, current_timestamp(), 0, NULL, 'Uttara', '01714425594', current_timestamp());
+INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_received`, `address`, `contact_number`, `cause`, `registration_date`) VALUES (1, 3, current_timestamp(), 420.69, NULL, 'Mohammadpur', '019190871129', 'I really, want to buy a ultra high end Keyboard.', current_timestamp());-- First, insert into admin_table since user_table references it
