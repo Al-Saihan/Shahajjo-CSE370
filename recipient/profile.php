@@ -7,12 +7,6 @@ if ($_SESSION['role'] !== 'recipient') {
     exit();
 }
 
-// Clear any existing feedback messages if page is refreshed
-if (!isset($_POST['submit_feedback'])) {
-    unset($_SESSION['feedback_error']);
-    unset($_SESSION['feedback_success']);
-}
-
 // Get recipient data
 try {
     $stmt = $pdo->prepare("
@@ -51,44 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
         exit();
     } catch (PDOException $e) {
         $error = "Failed to update profile: " . $e->getMessage();
-    }
-}
-
-// Handle feedback submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
-    $uid = $_POST['uid'] ?? null;
-    $stars = (int)($_POST['stars'] ?? 0);
-    $feedback = htmlspecialchars($_POST['feedback'] ?? '');
-    
-    // Validate inputs
-    if (!$uid || !$stars || empty($feedback)) {
-        $_SESSION['feedback_error'] = "All fields are required";
-        header("Location: profile.php");
-        exit();
-    }
-    
-    if ($stars < 1 || $stars > 5) {
-        $_SESSION['feedback_error'] = "Please select between 1-5 stars";
-        header("Location: profile.php");
-        exit();
-    }
-    // Query for feedback table
-    try {
-        $stmt = $pdo->prepare("
-            INSERT INTO feedback_table (uid, review, posting_date, stars) 
-            VALUES (?, ?, CURDATE(), ?)
-        ");
-        
-        // Query execution
-        $stmt->execute([$uid, $feedback, $stars]);
-        
-        $_SESSION['feedback_success'] = "Thank you for your feedback!";
-        header("Location: profile.php");
-        exit();
-    } catch (PDOException $e) {
-        $_SESSION['feedback_error'] = "Failed to submit feedback: " . $e->getMessage();
-        header("Location: profile.php");
-        exit();
     }
 }
 ?>
@@ -139,6 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
         .btn-pp {
             background-color:rgba(61, 17, 55, 0.35);
         }
+        .text-taka {
+            color: rgb(176, 235, 175); 
+            font-weight: bold;
+        }
     </style>
 </head>
 <body style="background: linear-gradient(to right,rgb(70, 51, 69),rgb(204, 205, 206));">
@@ -170,12 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
 
                 <div class="card profile-card mb-4 bg-pink">
                     <div class="card-body text-center">
-                        <style>
-                            .text-taka {
-                                color: rgb(176, 235, 175); 
-                                font-weight: bold;
-                            }
-                        </style>
                         <h4><?= htmlspecialchars($recipient['first_name'] . "'s") ?></h4>
                         <p class="fw-bold fs-10 text-taka">Wallet                       
                         <hr>
@@ -206,7 +160,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
                     </div>
                 </div>
             </div>
+            
             <div class="col-md-8">
+                <!-- Feedback success message (only one instance) -->
+                <?php if (isset($_SESSION['feedback_success'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show mb-4">
+                        <?= htmlspecialchars($_SESSION['feedback_success']) ?>
+                    </div>
+                    <?php unset($_SESSION['feedback_success']); ?>
+                <?php endif; ?>
+
                 <?php if (isset($_SESSION['profile_update'])): ?>
                     <div class="alert alert-success">
                         <?= htmlspecialchars($_SESSION['profile_update']) ?>
@@ -226,13 +189,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
                         <?= htmlspecialchars($_SESSION['feedback_error']) ?>
                     </div>
                     <?php unset($_SESSION['feedback_error']); ?>
-                <?php endif; ?>
-
-                <?php if (isset($_SESSION['feedback_success'])): ?>
-                    <div class="alert alert-success">
-                        <?= htmlspecialchars($_SESSION['feedback_success']) ?>
-                    </div>
-                    <?php unset($_SESSION['feedback_success']); ?>
                 <?php endif; ?>
 
                 <div class="card profile-card bg-pink">
@@ -291,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
                     <h5 class="modal-title" id="ratingModalLabel">Rate Our Service</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form method="POST" action="profile.php">
+                <form method="POST" action="process_feedback.php">
                     <div class="modal-body">
                         <div class="mb-4">
                             <label class="form-label">Rating (1-5 stars)</label>
@@ -310,7 +266,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_feedback'])) {
                                       placeholder="Please share your experience with us..." required></textarea>
                         </div>
                         <input type="hidden" name="submit_feedback" value="1">
-                        <input type="hidden" name="uid" value="<?= $_SESSION['user_id'] ?>">
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

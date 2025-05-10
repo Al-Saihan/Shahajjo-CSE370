@@ -142,7 +142,7 @@ CREATE TABLE feedback_table (
   review TEXT,
   posting_date DATE,
   stars INT CHECK (stars BETWEEN 0 AND 5),
-  PRIMARY KEY (uid, posting_date),
+  PRIMARY KEY (uid),
   FOREIGN KEY (uid) REFERENCES user_table(id)
 );
 
