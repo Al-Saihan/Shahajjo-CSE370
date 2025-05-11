@@ -21,7 +21,6 @@ CREATE TABLE user_table (
     password VARCHAR(255) NOT NULL,
     role ENUM('donor', 'recipient', 'admin') DEFAULT NULL,
     status ENUM('verified', 'unverified', 'blacklisted') NOT NULL DEFAULT 'unverified',
-    profile_complete TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     -- ADMIN FOREIGN KEY, IS BELOW AT TITLE 13
 );
@@ -38,7 +37,6 @@ CREATE TABLE donor_table (
     address TEXT,
     contact_number VARCHAR(20),
     total_income int(11),
-    registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
 
@@ -55,7 +53,6 @@ CREATE TABLE recipient_table (
     address TEXT,
     contact_number VARCHAR(20),
     cause TEXT,
-    registration_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user_table(id)
 );
 
@@ -93,8 +90,7 @@ CREATE TABLE receives (
   donation_amount DECIMAL(10,2),
   PRIMARY KEY (donation_no, recipient_uid, org_bin),
   FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no),
-  FOREIGN KEY (recipient_uid) REFERENCES user_table(id),
-  FOREIGN KEY (org_bin) REFERENCES organization_table(org_bin)
+  FOREIGN KEY (recipient_uid) REFERENCES user_table(id)
 );
 
 
@@ -140,22 +136,22 @@ ADD FOREIGN KEY (admin_id) REFERENCES admin_table(admin_id);
 
 -- 12. ADD MAIN SUPER_ADMIN && 
 INSERT INTO `admin_table`(`admin_id`, `admin_name`, `access_level`) VALUES ('1','PIEU','super_admin');
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES (1, 'Naruto', 'Dattebayo', 'Uzumaki', 'admin@gmail.com', '$2y$10$80bXmzydkJZkf9ElLIVapOSesOt.Y3EOi61m/aZpHpH8eMeEw4VFy', 'admin', 'verified', 0, current_timestamp(), 1);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `created_at`, `admin_id`) VALUES (1, 'Naruto', 'Dattebayo', 'Uzumaki', 'admin@gmail.com', '$2y$10$80bXmzydkJZkf9ElLIVapOSesOt.Y3EOi61m/aZpHpH8eMeEw4VFy', 'admin', 'verified', current_timestamp(), 1);
 
 
 
 -- 13. ADDING DUMMY USER AND RECIPIENT - MAIN
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES 
-(2, 'Jawadul', 'Idur', 'Hoque', 'd@gmail.com', '$2y$10$dgtYKavxWYxH3zfF/Wm6j.8GkllitA4y0TtbRlbpCzDYSCqacIXZ.', 'donor', 'verified', 0, current_timestamp(), NULL);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `created_at`, `admin_id`) VALUES 
+(2, 'Jawadul', 'Idur', 'Hoque', 'd@gmail.com', '$2y$10$dgtYKavxWYxH3zfF/Wm6j.8GkllitA4y0TtbRlbpCzDYSCqacIXZ.', 'donor', 'verified', current_timestamp(), NULL);
 
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES 
-(3, 'Saif', 'Sissy', 'Uddin', 'r@gmail.com', '$2y$10$LBoZ/Jk6htpOe.uMZeVJ/ORmOqC3uD6XpWeihk6rv4sQF/DJFfetS', 'recipient', 'unverified', 0, current_timestamp(), NULL);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `created_at`, `admin_id`) VALUES 
+(3, 'Saif', 'Sissy', 'Uddin', 'r@gmail.com', '$2y$10$LBoZ/Jk6htpOe.uMZeVJ/ORmOqC3uD6XpWeihk6rv4sQF/DJFfetS', 'recipient', 'unverified', current_timestamp(), NULL);
 
-INSERT INTO `donor_table` (`id`, `user_id`, `created_at`, `total_donations`, `last_donation`, `address`, `contact_number`, `registration_date`) VALUES 
-(1, 2, current_timestamp(), 0, NULL, 'Uttara', '01714425594', current_timestamp());
+INSERT INTO `donor_table` (`id`, `user_id`, `created_at`, `total_donations`, `last_donation`, `address`, `contact_number`) VALUES 
+(1, 2, current_timestamp(), 0, NULL, 'Uttara', '01714425594');
 
-INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_received`, `address`, `contact_number`, `cause`, `registration_date`) VALUES 
-(1, 3, current_timestamp(), 420.69, NULL, 'Mohammadpur', '019190871129', 'I really, want to buy a ultra high end Keyboard.', current_timestamp());
+INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_received`, `address`, `contact_number`, `cause`) VALUES 
+(1, 3, current_timestamp(), 420.69, NULL, 'Mohammadpur', '019190871129', 'I really, want to buy a ultra high end Keyboard.');
 
 
 
@@ -166,33 +162,33 @@ INSERT INTO `admin_table`(`admin_id`, `admin_name`, `access_level`) VALUES
 (2, 'RAHMAN', 'moderator'),
 (3, 'KHANDAKAR', 'moderator');
 
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES 
-(12, 'Shahriar', 'Ibn', 'Rahman', 'a1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'admin', 'verified', 0, current_timestamp(), 2),
-(13, 'Farhana', 'Binte', 'Khandakar', 'a2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'admin', 'verified', 0, current_timestamp(), 3);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `created_at`, `admin_id`) VALUES 
+(12, 'Shahriar', 'Ibn', 'Rahman', 'a1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'admin', 'verified', current_timestamp(), 2),
+(13, 'Farhana', 'Binte', 'Khandakar', 'a2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'admin', 'verified', current_timestamp(), 3);
 
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES 
-(4, 'Abdullah', 'Al', 'Mamun', 'd1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', 0, current_timestamp(), NULL),
-(5, 'Tasnim', 'Farzana', 'Ahmed', 'd2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', 0, current_timestamp(), NULL),
-(6, 'Rafiqul', 'Islam', 'Khan', 'd3@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', 0, current_timestamp(), NULL),
-(7, 'Nusrat', 'Jahan', 'Akter', 'd4@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', 0, current_timestamp(), NULL);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `created_at`, `admin_id`) VALUES 
+(4, 'Abdullah', 'Al', 'Mamun', 'd1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', current_timestamp(), NULL),
+(5, 'Tasnim', 'Farzana', 'Ahmed', 'd2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', current_timestamp(), NULL),
+(6, 'Rafiqul', 'Islam', 'Khan', 'd3@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', current_timestamp(), NULL),
+(7, 'Nusrat', 'Jahan', 'Akter', 'd4@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'donor', 'verified', current_timestamp(), NULL);
 
-INSERT INTO `donor_table` (`id`, `user_id`, `created_at`, `total_donations`, `last_donation`, `address`, `contact_number`, `registration_date`) VALUES 
-(2, 4, current_timestamp(), 0, NULL, 'Gulshan', '01711234567', current_timestamp()),
-(3, 5, current_timestamp(), 0, NULL, 'Banani', '01819876543', current_timestamp()),
-(4, 6, current_timestamp(), 0, NULL, 'Dhanmondi', '01915678901', current_timestamp()),
-(5, 7, current_timestamp(), 0, NULL, 'Mirpur', '01612345678', current_timestamp());
+INSERT INTO `donor_table` (`id`, `user_id`, `created_at`, `total_donations`, `last_donation`, `address`, `contact_number`) VALUES 
+(2, 4, current_timestamp(), 0, NULL, 'Gulshan', '01711234567'),
+(3, 5, current_timestamp(), 0, NULL, 'Banani', '01819876543'),
+(4, 6, current_timestamp(), 0, NULL, 'Dhanmondi', '01915678901'),
+(5, 7, current_timestamp(), 0, NULL, 'Mirpur', '01612345678');
 
-INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `profile_complete`, `created_at`, `admin_id`) VALUES 
-(8, 'Sharmin', 'Akter', 'Begum', 'r1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', 0, current_timestamp(), NULL),
-(9, 'Kamal', 'Hossain', 'Mia', 'r2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', 0, current_timestamp(), NULL),
-(10, 'Farhana', 'Yasmin', 'Rahman', 'r3@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'unverified', 0, current_timestamp(), NULL),
-(11, 'Arif', 'Ul', 'Islam', 'r4@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', 0, current_timestamp(), NULL);
+INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `created_at`, `admin_id`) VALUES 
+(8, 'Sharmin', 'Akter', 'Begum', 'r1@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', current_timestamp(), NULL),
+(9, 'Kamal', 'Hossain', 'Mia', 'r2@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', current_timestamp(), NULL),
+(10, 'Farhana', 'Yasmin', 'Rahman', 'r3@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'unverified', current_timestamp(), NULL),
+(11, 'Arif', 'Ul', 'Islam', 'r4@gmail.com', '$2y$10$bRqPl0jDfccbqTJ6GZ0a8ewqipy5W8ff6jI3AsKewJiejL8Ytb/Yy', 'recipient', 'verified', current_timestamp(), NULL);
 
-INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_received`, `address`, `contact_number`, `cause`, `registration_date`) VALUES 
-(2, 8, current_timestamp(), 0, NULL, 'Baridhara', '01776543210', 'Need funds for daughter''s heart surgery', current_timestamp()),
-(3, 9, current_timestamp(), 0, NULL, 'Bashundhara', '01887654321', 'Repairing flood-damaged home', current_timestamp()),
-(4, 10, current_timestamp(), 0, NULL, 'Motijheel', '01998765432', 'Starting a small tailoring business', current_timestamp()),
-(5, 11, current_timestamp(), 0, NULL, 'Farmgate', '01665432109', 'University tuition fees for orphan student', current_timestamp());
+INSERT INTO `recipient_table` (`id`, `user_id`, `created_at`, `wallet`, `last_received`, `address`, `contact_number`, `cause`) VALUES 
+(2, 8, current_timestamp(), 0, NULL, 'Baridhara', '01776543210', 'Need funds for daughter''s heart surgery'),
+(3, 9, current_timestamp(), 0, NULL, 'Bashundhara', '01887654321', 'Repairing flood-damaged home'),
+(4, 10, current_timestamp(), 0, NULL, 'Motijheel', '01998765432', 'Starting a small tailoring business'),
+(5, 11, current_timestamp(), 0, NULL, 'Farmgate', '01665432109', 'University tuition fees for orphan student');
 
 
 
