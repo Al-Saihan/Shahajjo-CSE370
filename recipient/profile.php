@@ -143,8 +143,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                 <div class="card profile-card mb-4 bg-pink">
                     <div class="card-body text-center">
                         <h4><?= htmlspecialchars($recipient['first_name'] . "'s") ?></h4>
-                        <p class="fw-bold fs-10 text-taka">Wallet
-                            <hr>
+                        <p class="fw-bold fs-10 text-taka">Total Money Received</p>
+                        <hr>
                         <p class="fw-bold fs-1 text-taka">৳
                             <?= number_format($recipient['wallet'], 2) ?></p>
                         <hr>
