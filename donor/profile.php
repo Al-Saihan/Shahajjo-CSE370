@@ -53,9 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
     
     if ($income >= $zakat_threshold) {
         $amount = floatval($_POST['amount'] ?? 0);
+        $zakat_type = $_POST['zakat_type'] ?? '';
         $minimum_zakat = $income * 0.025;
         
-        if ($amount >= $minimum_zakat) {
+        if ($amount >= $minimum_zakat && !empty($zakat_type)) {
             try {
                 // Generate donation number
                 $donation_no = 'ZAKAT-' . strtoupper(uniqid());
@@ -66,14 +67,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                 $donor_data = $stmt->fetch();
                 $donor_id = $donor_data['id'];
                 
+                // Insert into total_donations
                 $stmt = $pdo->prepare("
                     INSERT INTO total_donations 
                     (donor_id, recipient_id, donations_amount, donation_date, confirmation)
                     VALUES (?, NULL, ?, NOW(), 0)
                 ");
                 $stmt->execute([
-                    $donor_id,  // donor_id from donor_table
+                    $donor_id,
                     $amount
+                ]);
+                
+                // Get the last inserted donation_no
+                $donation_id = $pdo->lastInsertId();
+                
+                // Insert into jakat_donation table
+                $stmt = $pdo->prepare("
+                    INSERT INTO jakat_donation 
+                    (jakat_type, td_no)
+                    VALUES (?, ?)
+                ");
+                $stmt->execute([
+                    $zakat_type,
+                    $donation_id
                 ]);
                 
                 // Update donor's total donations count
@@ -85,13 +101,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                 ");
                 $stmt->execute([$_SESSION['user_id']]);
                 
-                $_SESSION['profile_update'] = "Zakat donation of ৳" . number_format($amount, 2) . " successfully recorded!";
+                $_SESSION['profile_update'] = "Zakat donation of ৳" . number_format($amount, 2) . " ($zakat_type) successfully recorded!";
             } catch (PDOException $e) {
                 error_log("Zakat donation error: " . $e->getMessage());
                 $_SESSION['feedback_error'] = "Donation failed. Please try again later.";
             }
         } else {
-            $_SESSION['feedback_error'] = "Amount must be at least ৳" . number_format($minimum_zakat, 2);
+            $_SESSION['feedback_error'] = "Amount must be at least ৳" . number_format($minimum_zakat, 2) . " and zakat type must be selected";
         }
     } else {
         $_SESSION['feedback_error'] = "You are not eligible to pay zakat";
@@ -287,7 +303,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
 <div class="modal fade" id="donateZakatModal" tabindex="-1" aria-labelledby="donateZakatModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="POST" action="profile.php">  <!-- Changed action to profile.php -->
+            <form method="POST" action="profile.php">
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="donateZakatModalLabel">Donate Zakat</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -300,6 +316,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                     ?>
                     
                     <?php if ($income >= $zakat_threshold): ?>
+                        <div class="mb-3">
+                            <label class="form-label">Zakat Type</label>
+                            <select class="form-select" name="zakat_type" required>
+                                <option value="">Select Zakat Type</option>
+                                <option value="Zakat al-Mal">Zakat al-Mal (Wealth Zakat)</option>
+                                <option value="Zakat al-Fitr">Zakat al-Fitr (Fitrana)</option>
+                            </select>
+                        </div>
                         <div class="mb-3">
                             <label for="zakatAmount" class="form-label">Enter Zakat Amount (Minimum: ৳<?= number_format($minimum_zakat, 2) ?>)</label>
                             <div class="input-group">
