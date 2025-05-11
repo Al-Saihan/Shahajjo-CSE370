@@ -64,7 +64,6 @@
             <a class="navbar-brand fs-2 fw-bold" href="../index.php">Shahajjo</a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="profile.php">Profile</a>
-                <a class="nav-link" href="../process_logout.php">Logout</a>
             </div>
         </div>
     </nav>
