@@ -25,8 +25,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($recipient_id && $amount && $method) {
         try {
-            $insert = $pdo->prepare("INSERT INTO donations (donor_id, recipient_id, amount, method, donated_at) VALUES (?, ?, ?, ?, NOW())");
-            $insert->execute([$donor_id, $recipient_id, $amount, $method]);
+            // Get next donation number
+            $nextDonationNo = 1;
+            $maxStmt = $pdo->query("SELECT MAX(donation_no) AS max_no FROM total_donations");
+            $maxRow = $maxStmt->fetch();
+            if ($maxRow && $maxRow['max_no']) {
+                $nextDonationNo = $maxRow['max_no'] + 1;
+            }
+
+            // Insert donation record
+            $insert = $pdo->prepare("
+                INSERT INTO total_donations (
+                    donor_id, recipient_id, donation_no, donations_amount, donation_date, confirmation
+                ) VALUES (?, ?, ?, ?, NOW(), 0)
+            ");
+            $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
+
             $message = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
         } catch (PDOException $e) {
             $message = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
@@ -101,8 +115,7 @@ try {
                     <td><?= htmlspecialchars($recipient['email']) ?></td>
                     <td>
                         <!-- Modal Trigger -->
-                        <button class="btn btn-sm btn-success border border-dark"
-                                data-bs-toggle="modal" data-bs-target="#donateModal<?= $recipient['recipient_table_id'] ?>">
+                        <button class="btn btn-sm btn-success border border-dark" data-bs-toggle="modal" data-bs-target="#donateModal<?= $recipient['recipient_table_id'] ?>" onclick="event.stopPropagation();">
                             Donate
                         </button>
                     </td>
@@ -133,15 +146,11 @@ try {
                                         <h5>Contact Information</h5>
                                         <div class="address-box">
                                             <p><strong>Address:</strong></p>
-                                            <?= $recipient['recipient_address']
-                                                ? nl2br(htmlspecialchars($recipient['recipient_address']))
-                                                : '<p class="text-muted">Not provided</p>' ?>
+                                            <?= $recipient['recipient_address'] ? nl2br(htmlspecialchars($recipient['recipient_address'])) : '<p class="text-muted">Not provided</p>' ?>
                                         </div>
                                         <div class="address-box">
                                             <p><strong>Phone Number:</strong></p>
-                                            <?= $recipient['recipient_contact']
-                                                ? htmlspecialchars($recipient['recipient_contact'])
-                                                : '<span class="text-muted">Not provided</span>' ?>
+                                            <?= $recipient['recipient_contact'] ? htmlspecialchars($recipient['recipient_contact']) : '<span class="text-muted">Not provided</span>' ?>
                                         </div>
                                     </div>
                                 </div>
@@ -151,8 +160,7 @@ try {
                 </tr>
 
                 <!-- Modal -->
-                <div class="modal fade" id="donateModal<?= $recipient['recipient_table_id'] ?>" tabindex="-1"
-                     aria-labelledby="donateModalLabel<?= $recipient['recipient_table_id'] ?>" aria-hidden="true">
+                <div class="modal fade" id="donateModal<?= $recipient['recipient_table_id'] ?>" tabindex="-1" aria-labelledby="donateModalLabel<?= $recipient['recipient_table_id'] ?>" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <form method="POST" action="donate.php">
@@ -163,7 +171,7 @@ try {
                                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <input type="hidden" name="recipient_id" value="<?= $recipient['recipient_id'] ?>">
+                                    <input type="hidden" name="recipient_id" value="<?= $recipient['recipient_table_id'] ?>">
                                     <div class="mb-3">
                                         <label class="form-label">Amount (BDT)</label>
                                         <input type="number" name="amount" class="form-control" required min="1">

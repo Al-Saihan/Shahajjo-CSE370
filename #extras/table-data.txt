@@ -85,10 +85,10 @@ CREATE TABLE organization_table (
 CREATE TABLE total_donations (
   donor_id INT(11),
   recipient_id INT(11),
-  donation_no INT PRIMARY KEY,
+  donation_no INT AUTO_INCREMENT PRIMARY KEY,
   donations_amount DECIMAL(10,2),
-  donation_date DATE,
-  confirmation BOOLEAN,
+  donation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  confirmation TINYINT DEFAULT 0,
   FOREIGN KEY (donor_id) REFERENCES donor_table(id),
   FOREIGN KEY (recipient_id) REFERENCES recipient_table(id)
 );
