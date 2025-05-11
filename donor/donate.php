@@ -22,6 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $recipient_id = $_POST['recipient_id'] ?? null;
     $amount = $_POST['amount'] ?? null;
     $method = $_POST['method'] ?? null;
+    $donation_type = $_POST['donation_type'] ?? null;
 
     if ($recipient_id && $amount && $method) {
         try {
@@ -43,6 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ) VALUES (?, ?, ?, ?, NOW(), 0)
             ");
             $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
+
+            // Insert into specific table
+            if ($donation_type === 'zakat') {
+                $zakatStmt = $pdo->prepare("INSERT INTO jakat_donation (jakat_amount, td_no) VALUES (?, ?)");
+                $zakatStmt->execute([$amount, $nextDonationNo]);
+            } elseif ($donation_type === 'financial') {
+                $finStmt = $pdo->prepare("INSERT INTO financial_donations (money_amount, td_no) VALUES (?, ?)");
+                $finStmt->execute([$amount, $nextDonationNo]);
+            }
 
             $pdo->commit();
 
