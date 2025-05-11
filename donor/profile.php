@@ -45,6 +45,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
         $error = "Failed to update profile: " . $e->getMessage();
     }
 }
+
+// Handle Zakat donation
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
+    $zakat_threshold = 1139505.49;
+    $income = floatval($donor['total_income'] ?? 0);
+    
+    if ($income >= $zakat_threshold) {
+        $amount = floatval($_POST['amount'] ?? 0);
+        $minimum_zakat = $income * 0.025;
+        
+        if ($amount >= $minimum_zakat) {
+            try {
+                // Generate donation number
+                $donation_no = 'ZAKAT-' . strtoupper(uniqid());
+                
+                // Get donor's ID from donor_table (not user_id)
+                $stmt = $pdo->prepare("SELECT id FROM donor_table WHERE user_id = ?");
+                $stmt->execute([$_SESSION['user_id']]);
+                $donor_data = $stmt->fetch();
+                $donor_id = $donor_data['id'];
+                
+                $stmt = $pdo->prepare("
+                    INSERT INTO total_donations 
+                    (donor_id, recipient_id, donations_amount, donation_date, confirmation)
+                    VALUES (?, NULL, ?, NOW(), 0)
+                ");
+                $stmt->execute([
+                    $donor_id,  // donor_id from donor_table
+                    $amount
+                ]);
+                
+                // Update donor's total donations count
+                $stmt = $pdo->prepare("
+                    UPDATE donor_table 
+                    SET total_donations = total_donations + 1, 
+                        last_donation = NOW() 
+                    WHERE user_id = ?
+                ");
+                $stmt->execute([$_SESSION['user_id']]);
+                
+                $_SESSION['profile_update'] = "Zakat donation of ৳" . number_format($amount, 2) . " successfully recorded!";
+            } catch (PDOException $e) {
+                error_log("Zakat donation error: " . $e->getMessage());
+                $_SESSION['feedback_error'] = "Donation failed. Please try again later.";
+            }
+        } else {
+            $_SESSION['feedback_error'] = "Amount must be at least ৳" . number_format($minimum_zakat, 2);
+        }
+    } else {
+        $_SESSION['feedback_error'] = "You are not eligible to pay zakat";
+    }
+    
+    header("Location: profile.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -228,11 +283,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
     </div>
 </div>
 
-<!-- New Donate Zakat Modal with Amount Input -->
+<!-- Modified Donate Zakat Modal -->
 <div class="modal fade" id="donateZakatModal" tabindex="-1" aria-labelledby="donateZakatModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <form method="POST" action="../donor/donate.php">
+            <form method="POST" action="profile.php">  <!-- Changed action to profile.php -->
                 <div class="modal-header bg-primary text-white">
                     <h5 class="modal-title" id="donateZakatModalLabel">Donate Zakat</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -269,10 +324,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <?php if ($income >= $zakat_threshold): ?>
-                        <button type="submit" class="btn btn-primary">Proceed to Donate</button>
+                        <button type="submit" class="btn btn-primary" name="zakat_donation" value="1">Proceed to Donate</button>
                     <?php endif; ?>
                 </div>
-                <input type="hidden" name="zakat_donation" value="1">
             </form>
         </div>
     </div>
