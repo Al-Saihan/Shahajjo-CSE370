@@ -26,7 +26,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     </style>
 </head>
 
-<body>
+<body style="background: linear-gradient(to right, rgba(78, 82, 85, 0.51), rgb(216, 196, 215));">
     <!-- Simplified Header without login/register -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
@@ -122,6 +122,6 @@ if (session_status() === PHP_SESSION_NONE) session_start();
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
+</>
 
 </html>
