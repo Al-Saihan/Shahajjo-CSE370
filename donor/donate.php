@@ -190,6 +190,14 @@ try {
                                 <div class="modal-body">
                                     <input type="hidden" name="recipient_id" value="<?= $recipient['recipient_table_id'] ?>">
                                     <div class="mb-3">
+                                        <label class="form-label">Donation Type</label>
+                                        <select name="donation_type" class="form-select" required>
+                                            <option value="">Select Type</option>
+                                            <option value="zakat">Zakat Donation</option>
+                                            <option value="financial">Financial Donation</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label">Amount (BDT)</label>
                                         <input type="number" name="amount" class="form-control" required min="1">
                                     </div>
