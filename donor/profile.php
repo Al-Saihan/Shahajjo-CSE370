@@ -119,15 +119,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
             </div>
 
             <!-- Donate Button -->
-            <div class="card profile-card mb-4 bg-pink">
+            <div class="card profile-card mb-4 bg">
             <div class="card-body text-center">
                 <a href="donate.php" class="btn btn-success custom-card" style="width: 150px; height: 60px; font-size: 1.7rem;">
                     Donate
                 </a>
                 </div>
             </div>
+            <!-- Minimum Zakat Amount Button -->
+            <div class="card profile-card mb-4 bg">
+            <div class="card-body text-center">
+                <button type="button" class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#zakatModal">
+                    Minimum Zakat Amount
+                </button>
+            </div>
+        </div>
             <!-- Rate Us Button -->
-            <div class="card profile-card mb-4 bg-pink">
+            <div class="card profile-card mb-4 bg">
                     <div class="card-body text-center">                       
                         <button type="button" class="btn btn-pp btn-bg fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
                             Rate us!
@@ -244,6 +252,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
             </div>
         </div>
     </div>
+    <!-- Zakat Modal -->
+     <div class="modal fade" id="zakatModal" tabindex="-1" aria-labelledby="zakatModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-dark">
+                    <h5 class="modal-title" id="zakatModalLabel">Zakat Eligibility & Amount</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?php
+                    $zakat_threshold = 1139505.49;
+                    $income = floatval($donor['total_income'] ?? 0);
+                    ?>
+                    <?php if ($income >= $zakat_threshold): ?>
+                        <p class="mb-3">
+                            ✅ You are eligible for zakat based on your yearly income of <strong>৳<?= number_format($income, 2) ?></strong>.
+                        </p>
+                        <p>
+                            💰 Minimum zakat amount (2.5% of income): <br>
+                            <strong>৳<?= number_format($income * 0.025, 2) ?></strong>
+                        </p>
+                        <?php elseif ($income > 0): ?>
+                            <p class="text-danger">
+                                ❌ You are <strong>not eligible</strong> for zakat based on your yearly income of <strong>৳<?= number_format($income, 2) ?></strong>.
+                            </p>
+                            <p>The required minimum for zakat eligibility is <strong>৳<?= number_format($zakat_threshold, 2) ?></strong>.</p>
+                            <?php else: ?>
+                                <p class="text-muted">
+                                    ℹ️ Please update your profile with your total income to check zakat eligibility.
+                                </p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
