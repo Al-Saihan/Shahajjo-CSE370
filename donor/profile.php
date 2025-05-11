@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
         }
     </style>
 </head>
-<body>
+<body style="background: linear-gradient(to right,rgb(135, 165, 209),rgba(4, 28, 46, 0.51));"></body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
         <a class="navbar-brand fs-2 fw-bold" href="../index.php">Shahajjo</a>

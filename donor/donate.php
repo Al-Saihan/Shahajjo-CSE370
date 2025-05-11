@@ -90,7 +90,7 @@ try {
         .modal-header h5 { margin: 0; }
     </style>
 </head>
-<body>
+<body style="background: linear-gradient(to right,rgba(4, 28, 46, 0.51),rgb(135, 165, 209));"></body>
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">

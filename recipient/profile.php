@@ -96,12 +96,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
             background-color:rgba(61, 17, 55, 0.35);
         }
         .text-taka {
-            color: rgb(176, 235, 175); 
+            color: rgb(21, 143, 19); 
             font-weight: bold;
         }
     </style>
 </head>
-<body style="background: linear-gradient(to right,rgb(102, 80, 101),rgb(204, 205, 206));">
+<body style="background: linear-gradient(to right,rgb(216, 196, 215),rgba(78, 82, 85, 0.51));">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-sakib">
         <div class="container"> 
