@@ -106,7 +106,7 @@ try {
         
     </style>
 </head>
-<body style="background: linear-gradient(to right, rgba(78, 82, 85, 0.51), rgba(216, 196, 215));">
+<body style="background: linear-gradient(to right, rgba(78, 82, 85, 0.51), rgb(216, 196, 215));">
 
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: rgba(60, 50, 65, 0.6);">
     <div class="container"> 
