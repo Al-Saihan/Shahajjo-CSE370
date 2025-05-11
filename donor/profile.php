@@ -1,5 +1,4 @@
 <?php
-// Updated path to config.php (one level up from donor folder)
 require_once __DIR__ . '/../includes/config.php';
 require_once __DIR__ . '/../includes/access_check.php';
 
@@ -7,7 +6,6 @@ if ($_SESSION['role'] !== 'donor') {
     header("Location: ../unauthorized.php");
     exit();
 }
-
 
 // Get donor data
 try {
@@ -24,15 +22,15 @@ try {
 }
 
 // Handle profile updates
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
-    $income = $_POST['income'] ?? '';
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
+    $income = $_POST['total_income'] ?? '';
     $address = $_POST['address'] ?? '';
     $contact = $_POST['contact_number'] ?? '';
 
     try {
         $stmt = $pdo->prepare("
             UPDATE donor_table 
-            SET income = ?, address = ?, contact_number = ?
+            SET total_income = ?, address = ?, contact_number = ?
             WHERE user_id = ?
         ");
         $stmt->execute([$income, $address, $contact, $_SESSION['user_id']]);
@@ -65,6 +63,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+        }
+        /* Rating Modal Styles */
+        #ratingModal .modal-content {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        #ratingModal .form-select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(61, 17, 55, 0.3);
+        }
+        #ratingModal textarea {
+            min-height: 120px;
+            border-radius: 8px;
+            border: 1px solid rgba(61, 17, 55, 0.3);
         }
         .custom-card {
         border-radius: 10px;
@@ -106,7 +119,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
             </div>
 
             <!-- Donate Button -->
-            <div class="text-start px-2">
+            <div class="card profile-card mb-4 bg-pink">
             <div class="card-body text-center">
                 <a href="donate.php" class="btn btn-success custom-card" style="width: 150px; height: 60px; font-size: 1.7rem;">
                     Donate
@@ -114,53 +127,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                 </div>
             </div>
             <!-- Rate Us Button -->
-            <div class="text-start px-2 mt-3">
-                <div class="card-body text-center">
-                    <button class="btn btn-warning custom-card" style="width: 150px; height: 60px; font-size: 1.7rem;" data-bs-toggle="modal" data-bs-target="#rateUsModal">
-                        Rate Us
-                    </button>
+            <div class="card profile-card mb-4 bg-pink">
+                    <div class="card-body text-center">                       
+                        <button type="button" class="btn btn-pp btn-bg fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                            Rate us!
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+
             <div class="col-md-8">
-                <?php if (isset($_SESSION['profile_update'])): ?>
+                <!-- Feedback success message (only one instance) -->
                 <?php if (isset($_SESSION['feedback_success'])): ?>
-                    <div class="alert alert-success"><?= $_SESSION['feedback_success']; ?></div>
+                    <div class="alert alert-success alert-dismissible fade show mb-4">
+                        <?= htmlspecialchars($_SESSION['feedback_success']) ?>
+                    </div>
                     <?php unset($_SESSION['feedback_success']); ?>
                 <?php endif; ?>
-                <?php if (isset($_SESSION['feedback_error'])): ?>
-                    <div class="alert alert-danger"><?= $_SESSION['feedback_error']; ?></div>
-                    <?php unset($_SESSION['feedback_error']); ?>
-                <?php endif; ?>
+
+                <?php if (isset($_SESSION['profile_update'])): ?>
                     <div class="alert alert-success">
-                        <?= $_SESSION['profile_update'] ?>
+                        <?= htmlspecialchars($_SESSION['profile_update']) ?>
                     </div>
                     <?php unset($_SESSION['profile_update']); ?>
                 <?php endif; ?>
+                
+                <?php if (isset($_SESSION['account_message'])): ?>
+                    <div class="alert alert-info">
+                        <?= htmlspecialchars($_SESSION['account_message']) ?>
+                    </div>
+                    <?php unset($_SESSION['account_message']); ?>
+                <?php endif; ?>
+
+                <?php if (isset($_SESSION['feedback_error'])): ?>
+                    <div class="alert alert-danger">
+                        <?= htmlspecialchars($_SESSION['feedback_error']) ?>
+                    </div>
+                    <?php unset($_SESSION['feedback_error']); ?>
+                <?php endif; ?>
 
                 <div class="card profile-card">
-
-                    <?php if (isset($_SESSION['feedback_success'])): ?>
-                        <div class="alert alert-success"><?= $_SESSION['feedback_success']; ?></div>
-                        <?php unset($_SESSION['feedback_success']); ?>
-                    <?php endif; ?>
-
-                    <?php if (isset($_SESSION['feedback_error'])): ?>
-                        <div class="alert alert-danger"><?= $_SESSION['feedback_error']; ?></div>
-                        <?php unset($_SESSION['feedback_error']); ?>
-                    <?php endif; ?>
-
                     <div class="card-header bg-primary text-white">
                         <h4>My Profile</h4>
                     </div>
                     <div class="card-body">
-                        <form method="POST">
+                        <form method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']); ?>">
                             <div class="needs-box mb-4 bg-dp">
                                 <h5>Personal Information</h5>
                                 <div class="mb-3">
                                     <label class="form-label">Total Income (yearly)</label>
-                                    <input type="number" class="form-control" name="income" 
-                                           value="<?= htmlspecialchars($donor['income'] ?? '') ?>" required>
+                                    <input type="number" class="form-control" name="total_income" 
+                                           value="<?= htmlspecialchars($donor['total_income'] ?? '') ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
@@ -176,7 +193,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                             <div class="needs-box bg-dp">
                                 <h5>Address Details</h5>
                                 <div class="mb-3">
-                                    <textarea class="form-control" name="address" rows="4" required><?= 
+                                    <textarea class="form-control" name="address" rows="2" required><?= 
                                         htmlspecialchars($donor['address'] ?? '') 
                                     ?></textarea>
                                 </div>
@@ -191,38 +208,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
     </div>
 
     
-        <!-- Rate Us Modal -->
-    <div class="modal fade" id="rateUsModal" tabindex="-1" aria-labelledby="rateUsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form action="process_feedback.php" method="POST" class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="rateUsModalLabel">Rate Shahajjo</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="mb-3">
-            <label class="form-label">Your Rating (1 to 5)</label>
-            <select class="form-select" name="stars" required>
-                <option value="">Select rating</option>
-                <option value="1">★☆☆☆☆ (1 star - Poor)</option>
-                <option value="2">★★☆☆☆ (2 stars - Fair)</option>
-                <option value="3">★★★☆☆ (3 stars - Good)</option>
-                <option value="4">★★★★☆ (4 stars - Very Good)</option>
-                <option value="5">★★★★★ (5 stars - Excellent)</option>
-            </select>
+    <!-- Rating popup(modal) -->
+    <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="ratingModalLabel">Rate Our Service</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" action="process_feedback.php">
+                    <div class="modal-body">
+                        <div class="mb-4">
+                            <label class="form-label">Rating (1-5 stars)</label>
+                            <select class="form-select" name="stars" required>
+                                <option value="">Select rating</option>
+                                <option value="1">★☆☆☆☆ (1 star - Poor)</option>
+                                <option value="2">★★☆☆☆ (2 stars - Fair)</option>
+                                <option value="3">★★★☆☆ (3 stars - Good)</option>
+                                <option value="4">★★★★☆ (4 stars - Very Good)</option>
+                                <option value="5">★★★★★ (5 stars - Excellent)</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="feedbackText" class="form-label">Your Feedback</label>
+                            <textarea class="form-control" id="feedbackText" name="feedback" rows="3" 
+                                      placeholder="Please share your experience with us..." required></textarea>
+                        </div>
+                        <input type="hidden" name="submit_feedback" value="1">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-pp">Submit Feedback</button>
+                    </div>
+                </form>
             </div>
-            <div class="mb-3">
-            <label class="form-label">Feedback</label>
-            <textarea class="form-control" name="feedback" rows="4" placeholder="Write your thoughts here..." required></textarea>
-            </div>
         </div>
-        <div class="modal-footer">
-            <button type="submit" name="submit_feedback" class="btn btn-primary">Submit Feedback</button>
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        </div>
-        </form>
     </div>
-</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
