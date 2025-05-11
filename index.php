@@ -23,12 +23,18 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             padding: 2rem 0;
             margin-top: 4rem;
         }
+        .bg-pp {
+            background-color:rgba(52, 58, 64, 1);
+        }
+        .btn-pp {
+            background-color:rgba(0, 0, 0, 0.27);
+        }
     </style>
 </head>
 
 <body style="background: linear-gradient(to right, rgba(78, 82, 85, 0.51), rgb(216, 196, 215));">
     <!-- Simplified Header without login/register -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-pp">
         <div class="container">
             <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="index.php" style="font-size: 1.5rem; letter-spacing: 2px;">Shahajjo</a>
         </div>
@@ -98,7 +104,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                 ?>
             </div>
             <div class="mt-3">
-                <a href="feedback" class="btn btn-primary btn-lg">See All Feedback</a>
+                <a href="feedback" class="btn btn-pp btn-lg">See All Feedback</a>
             </div>
         </div>
     </div>
