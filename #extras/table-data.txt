@@ -6,7 +6,9 @@ USE shahajjo_db;
 CREATE TABLE admin_table (
   admin_id INT(11) PRIMARY KEY AUTO_INCREMENT,
   admin_name VARCHAR(255),
-  access_level ENUM('super_admin', 'moderator') NOT NULL DEFAULT 'moderator'
+  access_level ENUM('super_admin', 'moderator') NOT NULL DEFAULT 'moderator', 
+  creator INT(11),
+  FOREIGN KEY (creator) REFERENCES admin_table(admin_id)
 );
 
 
@@ -200,7 +202,8 @@ CREATE TABLE savings_withdrawal_log (
   withdrawal_method ENUM('bkash', 'nagad', 'upay', 'rocket', 'bank_transfer') NOT NULL,
   transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (withdrawal_id),
-  KEY account_no (account_no)
+  KEY account_no (account_no), 
+  FOREIGN KEY (account_no) REFERENCES savings_account(account_no)
 );
 
 -- 16. Dummy Donations
