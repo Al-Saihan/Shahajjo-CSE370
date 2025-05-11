@@ -68,6 +68,10 @@ try {
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        .table {
+            margin-bottom: 0px;
+        }
+
         .table-container {
             max-height: 75vh;
             /* 75% of viewport height */
@@ -182,7 +186,7 @@ try {
         <div class="d-flex justify-content-between align-items-center mb-3">
             <form method="GET" action="dashboard.php" class="d-flex align-items-center flex-wrap gap-2">
                 <div class="d-flex align-items-center">
-                    <label for="sort_by" class="form-label mb-0 me-2">Sort By:</label>
+                    <label for="sort_by" class="form-label mb-0 me-2">Sort:</label>
                     <select name="sort_by" id="sort_by" class="form-select form-select-sm" onchange="this.form.submit()">
                         <option value="id" <?= !isset($_GET['sort_by']) || $_GET['sort_by'] === 'id' ? 'selected' : '' ?>>ID</option>
                         <option value="first_name" <?= isset($_GET['sort_by']) && $_GET['sort_by'] === 'first_name' ? 'selected' : '' ?>>Name</option>
