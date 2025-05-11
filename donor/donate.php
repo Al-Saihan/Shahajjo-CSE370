@@ -44,15 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
-            /// Update recipient's wallet and last_received date
-            // $updateRecipient = $pdo->prepare("
-            //     UPDATE recipient_table
-            //     SET wallet = wallet + ?, last_received = CURDATE()
-            //     WHERE id = ?
-            // ");
-            // $updateRecipient->execute([$amount, $recipient_id]);
-
-            // Commit transaction
             $pdo->commit();
 
             $message = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";

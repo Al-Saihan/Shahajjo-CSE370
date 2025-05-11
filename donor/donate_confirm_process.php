@@ -48,15 +48,6 @@ try {
     ");
     $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
-    // Update recipient wallet
-    // $updateRecipient = $pdo->prepare("
-    //     UPDATE recipient_table
-    //     SET wallet = wallet + ?, last_received = CURDATE()
-    //     WHERE id = ?
-    // ");
-    // $updateRecipient->execute([$amount, $recipient_id]);
-
-    // Commit transaction
     $pdo->commit();
 
     // Clear session
