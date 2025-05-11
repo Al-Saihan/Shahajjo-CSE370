@@ -25,6 +25,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($recipient_id && $amount && $method) {
         try {
+            // Start transaction
+            $pdo->beginTransaction();
+
             // Get next donation number
             $nextDonationNo = 1;
             $maxStmt = $pdo->query("SELECT MAX(donation_no) AS max_no FROM total_donations");
@@ -41,9 +44,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
+            // Update recipient's wallet
+            $updateWallet = $pdo->prepare("UPDATE recipient_table SET wallet = wallet + ? WHERE id = ?");
+            $updateWallet->execute([$amount, $recipient_id]);
+
+            // Commit transaction
+            $pdo->commit();
+
             $message = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
-        } catch (PDOException $e) {
-            $message = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
+        } catch (Exception $e) {
+            // Only rollback if a transaction is active
+                $pdo->rollBack();
+                $message = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
         }
     } else {
         $message = "<div class='alert alert-danger text-center mt-3'>Please fill out all fields.</div>";
