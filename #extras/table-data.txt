@@ -21,6 +21,7 @@ CREATE TABLE user_table (
     password VARCHAR(255) NOT NULL,
     role ENUM('donor', 'recipient', 'admin') DEFAULT NULL,
     status ENUM('verified', 'unverified', 'blacklisted') NOT NULL DEFAULT 'unverified',
+    profile_complete TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     -- ADMIN FOREIGN KEY, IS BELOW AT TITLE 13
 );
