@@ -158,7 +158,19 @@ try {
             </div>
         </div>
     </nav>
+    <?php if (isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger text-center">
+            <?= htmlspecialchars($_SESSION['error']) ?>
+        </div>
+        <?php unset($_SESSION['error']); ?>
+    <?php endif; ?>
 
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success text-center">
+            <?= htmlspecialchars($_SESSION['success']) ?>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
     <div class="container my-5">
 
         <h2 class="mb-4 d-flex justify-content-between align-items-center">
@@ -419,6 +431,7 @@ try {
                         d.user_id AS donor_uid,
                         r.user_id AS recipient_uid,
                         r.cause,
+                        r.last_received,
                         CONCAT(du.first_name, ' ', COALESCE(du.middle_name, ''), ' ', du.last_name) AS donor_name,
                         CONCAT(ru.first_name, ' ', COALESCE(ru.middle_name, ''), ' ', ru.last_name) AS recipient_name,
                         du.email AS donor_email,
@@ -474,7 +487,9 @@ try {
                                     <td>
                                         <?php if (!$donation['confirmation']): ?>
                                             <form method="POST" action="process_handling_donations.php" class="d-inline">
-                                                <input type="hidden" name="donation_no" value="<?= $donation['donation_no'] ?>">
+                                                <?php foreach ($donation as $key => $value): ?>
+                                                    <input type="hidden" name="donation[<?= htmlspecialchars($key) ?>]" value="<?= htmlspecialchars($value) ?>">
+                                                <?php endforeach; ?>
                                                 <button type="submit" name="action" value="confirm" class="btn btn-success btn-sm">Confirm</button>
                                                 <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">Reject</button>
                                             </form>
