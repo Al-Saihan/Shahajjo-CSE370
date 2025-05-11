@@ -59,10 +59,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (Exception $e) {
             // Only rollback if a transaction is active
                 $pdo->rollBack();
-                $message = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
+                $_SESSION['message'] = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
+                header("Location: donate.php");
+                exit();
         }
     } else {
-        $message = "<div class='alert alert-danger text-center mt-3'>Please fill out all fields.</div>";
+        $_SESSION['message'] = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
+        header("Location: donate.php");
+        exit();
     }
 }
 
@@ -107,7 +111,12 @@ try {
 </nav>
 
 <div class="container mt-4">
-    <?php if (isset($message)) echo $message; ?>
+    <?php
+    if (isset($_SESSION['message'])) {
+        echo $_SESSION['message'];
+        unset($_SESSION['message']);
+    }
+    ?>
     <div class="table-responsive">
         <table class="table table-striped table-hover text-center">
             <thead>
@@ -179,7 +188,7 @@ try {
                 <div class="modal fade" id="donateModal<?= $recipient['recipient_table_id'] ?>" tabindex="-1" aria-labelledby="donateModalLabel<?= $recipient['recipient_table_id'] ?>" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <form method="POST" action="donate.php">
+                            <form method="POST" action="donation_confirm.php">
                                 <div class="modal-header bg-success text-white">
                                     <h5 class="modal-title" id="donateModalLabel<?= $recipient['recipient_table_id'] ?>">
                                         Donate to <?= htmlspecialchars($recipient['first_name'] . ' ' . $recipient['last_name']) ?>
