@@ -51,7 +51,7 @@ CREATE TABLE recipient_table (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     wallet FLOAT(10,2) DEFAULT 0.00,
     income INT(11),
-    last_received DATE,
+    last_received DATE DEFAULT CURRENT_TIMESTAMP,
     address TEXT,
     contact_number VARCHAR(20),
     cause TEXT,
@@ -87,7 +87,7 @@ CREATE TABLE total_donations (
   recipient_id INT(11),
   donation_no INT AUTO_INCREMENT PRIMARY KEY,
   donations_amount DECIMAL(10,2),
-  donation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  donation_date DATE DEFAULT CURRENT_TIMESTAMP,
   confirmation TINYINT DEFAULT 0,
   FOREIGN KEY (donor_id) REFERENCES donor_table(id),
   FOREIGN KEY (recipient_id) REFERENCES recipient_table(id)
