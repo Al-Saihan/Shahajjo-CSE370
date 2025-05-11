@@ -127,7 +127,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             <p>A platform to connect donors with recipients in need.</p>
             <div class="mt-3">
                 <a href="index.php" class="text-white mx-2">Home</a>
-                <a href="donations.php" class="text-white mx-2">Donations</a>
+                <a href="report" class="text-white mx-2">Donations Report</a>
                 <a href="about.php" class="text-white mx-2">About Us</a>
             </div>
             <div class="mt-3">
