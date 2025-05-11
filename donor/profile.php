@@ -50,23 +50,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
     $zakat_threshold = 1139505.49;
     $income = floatval($donor['total_income'] ?? 0);
-    
+
     if ($income >= $zakat_threshold) {
         $amount = floatval($_POST['amount'] ?? 0);
         $zakat_type = $_POST['zakat_type'] ?? '';
         $minimum_zakat = $income * 0.025;
-        
+
         if ($amount >= $minimum_zakat && !empty($zakat_type)) {
             try {
                 // Generate donation number
                 $donation_no = 'ZAKAT-' . strtoupper(uniqid());
-                
+
                 // Get donor's ID from donor_table (not user_id)
                 $stmt = $pdo->prepare("SELECT id FROM donor_table WHERE user_id = ?");
                 $stmt->execute([$_SESSION['user_id']]);
                 $donor_data = $stmt->fetch();
                 $donor_id = $donor_data['id'];
-                
+
                 // Insert into total_donations
                 $stmt = $pdo->prepare("
                     INSERT INTO total_donations 
@@ -77,10 +77,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                     $donor_id,
                     $amount
                 ]);
-                
+
                 // Get the last inserted donation_no
                 $donation_id = $pdo->lastInsertId();
-                
+
                 // Insert into jakat_donation table
                 $stmt = $pdo->prepare("
                     INSERT INTO jakat_donation 
@@ -91,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                     $zakat_type,
                     $donation_id
                 ]);
-                
+
                 // Update donor's total donations count
                 $stmt = $pdo->prepare("
                     UPDATE donor_table 
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                     WHERE user_id = ?
                 ");
                 $stmt->execute([$_SESSION['user_id']]);
-                
+
                 $_SESSION['profile_update'] = "Zakat donation of ৳" . number_format($amount, 2) . " ($zakat_type) successfully recorded!";
             } catch (PDOException $e) {
                 error_log("Zakat donation error: " . $e->getMessage());
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
     } else {
         $_SESSION['feedback_error'] = "You are not eligible to pay zakat";
     }
-    
+
     header("Location: profile.php");
     exit();
 }
@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                     <p class="text-muted">Donor Profile</p>
                     <hr>
                     <p><strong>Member Since:</strong><br>
-                        <?= date('F j, Y', strtotime($donor['registration_date'])) ?>
+                        <?= date('F j, Y', strtotime($donor['created_at'])) ?>
                     </p>
                 </div>
             </div>
@@ -206,18 +206,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                 </div>
             </div>
             <!-- Minimum Zakat Amount and Donate Zakat Buttons - Stacked Vertically -->
-             <div class="card profile-card mb-4 bg-light">
+            <div class="card profile-card mb-4 bg-light">
                 <div class="card-body text-center d-flex flex-column justify-content-center align-items-center gap-2">
                     <!-- Minimum Zakat Button -->
-                     <button type="button" class="btn btn-success fw-bold w-50" data-bs-toggle="modal" data-bs-target="#zakatModal">
-                         Minimum Zakat Amount
-                        </button>
-            <!-- Donate Zakat Button -->
-             <button type="button" class="btn btn-success fw-bold w-50" data-bs-toggle="modal" data-bs-target="#donateZakatModal">
-                Donate Zakat
-            </button>
-        </div>
-    </div>
+                    <button type="button" class="btn btn-success fw-bold w-50" data-bs-toggle="modal" data-bs-target="#zakatModal">
+                        Minimum Zakat Amount
+                    </button>
+                    <!-- Donate Zakat Button -->
+                    <button type="button" class="btn btn-success fw-bold w-50" data-bs-toggle="modal" data-bs-target="#donateZakatModal">
+                        Donate Zakat
+                    </button>
+                </div>
+            </div>
             <!-- Rate Us Button -->
             <div class="card profile-card mb-4 bg">
                 <div class="card-body text-center">
@@ -314,7 +314,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                     $income = floatval($donor['total_income'] ?? 0);
                     $minimum_zakat = $income * 0.025;
                     ?>
-                    
+
                     <?php if ($income >= $zakat_threshold): ?>
                         <div class="mb-3">
                             <label class="form-label">Zakat Type</label>
@@ -328,7 +328,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                             <label for="zakatAmount" class="form-label">Enter Zakat Amount (Minimum: ৳<?= number_format($minimum_zakat, 2) ?>)</label>
                             <div class="input-group">
                                 <span class="input-group-text">৳</span>
-                                <input type="number" class="form-control" id="zakatAmount" name="amount" 
+                                <input type="number" class="form-control" id="zakatAmount" name="amount"
                                     min="<?= $minimum_zakat ?>" step="0.01" required
                                     placeholder="Enter amount">
                             </div>

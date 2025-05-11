@@ -35,11 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
             WHERE user_id = ?
         ");
         $stmt->execute([$income, $address, $contact, $cause, $_SESSION['user_id']]);
-        
+
         // Mark profile as complete
         $stmt = $pdo->prepare("UPDATE user_table SET profile_complete = TRUE WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
-        
+
         $_SESSION['profile_update'] = "Profile updated successfully!";
         header("Location: profile.php");
         exit();
@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Recipient Profile | Shahajjo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -57,54 +58,65 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
     <style>
         .profile-card {
             border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
+
         .needs-box {
-            background:rgba(207, 164, 164, 0.82);
+            background: rgba(207, 164, 164, 0.82);
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
         }
+
         /* Rating Modal Styles */
         #ratingModal .modal-content {
             border-radius: 10px;
             overflow: hidden;
         }
+
         #ratingModal .form-select {
             padding: 10px 15px;
             border-radius: 8px;
             border: 1px solid rgba(61, 17, 55, 0.3);
         }
+
         #ratingModal textarea {
             min-height: 120px;
             border-radius: 8px;
             border: 1px solid rgba(61, 17, 55, 0.3);
         }
+
         .bg-sakib {
-            background-color:rgba(60, 50, 65, 0.6);
+            background-color: rgba(60, 50, 65, 0.6);
         }
+
         .bg-pink {
-            background-color:rgba(255, 255, 255, 0.24);
+            background-color: rgba(255, 255, 255, 0.24);
         }
+
         .bg-dark_pink {
-            background-color:rgba(61, 17, 55, 0.58); 
+            background-color: rgba(61, 17, 55, 0.58);
         }
+
         .bg-dp {
-            background-color:rgba(61, 17, 55, 0.35); 
+            background-color: rgba(61, 17, 55, 0.35);
         }
+
         .btn-pp {
-            background-color:rgba(61, 17, 55, 0.35);
+            background-color: rgba(61, 17, 55, 0.35);
         }
+
         .text-taka {
-            color: rgb(21, 143, 19); 
+            color: rgb(21, 143, 19);
             font-weight: bold;
         }
     </style>
 </head>
+
 <body style="background: linear-gradient(to right,rgb(216, 196, 215),rgba(78, 82, 85, 0.51));">
 
     <nav class="navbar navbar-expand-lg navbar-dark bg-sakib">
-        <div class="container"> 
+        <div class="container">
             <a class="navbar-brand fs-2 fw-bold" href="../index.php">Shahajjo</a>
             <div class="navbar-nav ms-auto">
                 <span class="navbar-text me-3">
@@ -120,47 +132,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
             <div class="col-md-4">
                 <div class="card profile-card mb-4 bg-pink">
                     <div class="card-body text-center">
-                        <h4><?= htmlspecialchars($recipient['first_name'].' '.$recipient['last_name']) ?></h4>
+                        <h4><?= htmlspecialchars($recipient['first_name'] . ' ' . $recipient['last_name']) ?></h4>
                         <p class="text-muted">Recipient Profile</p>
                         <hr>
                         <p><strong>Member Since:</strong><br>
-                        <?= date('F j, Y', strtotime($recipient['registration_date'])) ?></p>
+                            <?= date('F j, Y', strtotime($recipient['created_at'])) ?></p>
                     </div>
                 </div>
 
                 <div class="card profile-card mb-4 bg-pink">
                     <div class="card-body text-center">
                         <h4><?= htmlspecialchars($recipient['first_name'] . "'s") ?></h4>
-                        <p class="fw-bold fs-10 text-taka">Wallet                       
-                        <hr>
+                        <p class="fw-bold fs-10 text-taka">Wallet
+                            <hr>
                         <p class="fw-bold fs-1 text-taka">৳
-                        <?= number_format($recipient['wallet'], 2) ?></p>
+                            <?= number_format($recipient['wallet'], 2) ?></p>
                         <hr>
                         <p class="fw-bold fs-20 text-dark">Last Received
-                        <?php if ($recipient['last_received'] === null): ?>
+                            <?php if ($recipient['last_received'] === null): ?>
                         <h4>---</h4>
-                        <?php else: ?>
-                            <h4><?= htmlspecialchars($recipient['last_received']) ?></h4>
-                        <?php endif; ?>
+                    <?php else: ?>
+                        <h4><?= htmlspecialchars($recipient['last_received']) ?></h4>
+                    <?php endif; ?>
                     </div>
                 </div>
 
                 <div class="card profile-card mb-4 bg-pink">
-                    <div class="card-body text-center">                       
+                    <div class="card-body text-center">
                         <a href="savings_account.php" class="btn btn-pp btn-bg fw-bold">My Account</a>
                         <hr>
-                        <a href="create_savings_account.php" class="btn btn-pp btn-bg fw-bold">Create an Account</a>                           
+                        <a href="create_savings_account.php" class="btn btn-pp btn-bg fw-bold">Create an Account</a>
                     </div>
                 </div>
                 <div class="card profile-card mb-4 bg-pink">
-                    <div class="card-body text-center">                       
+                    <div class="card-body text-center">
                         <button type="button" class="btn btn-pp btn-bg fw-bold" data-bs-toggle="modal" data-bs-target="#ratingModal">
                             Rate us!
                         </button>
                     </div>
                 </div>
             </div>
-            
+
             <div class="col-md-8">
                 <!-- Feedback success message (only one instance) -->
                 <?php if (isset($_SESSION['feedback_success'])): ?>
@@ -176,7 +188,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                     </div>
                     <?php unset($_SESSION['profile_update']); ?>
                 <?php endif; ?>
-                
+
                 <?php if (isset($_SESSION['account_message'])): ?>
                     <div class="alert alert-info">
                         <?= htmlspecialchars($_SESSION['account_message']) ?>
@@ -201,8 +213,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                                 <h5>Personal Information</h5>
                                 <div class="mb-3">
                                     <label class="form-label">Total Income (yearly)</label>
-                                    <input type="number" class="form-control" name="income" 
-                                           value="<?= htmlspecialchars($recipient['income'] ?? '') ?>" required>
+                                    <input type="number" class="form-control" name="income"
+                                        value="<?= htmlspecialchars($recipient['income'] ?? '') ?>" required>
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
@@ -210,28 +222,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                                 </div>
                                 <div class="mb-3">
                                     <label class="form-label">Contact Number</label>
-                                    <input type="tel" class="form-control" name="contact_number" 
-                                           value="<?= htmlspecialchars($recipient['contact_number'] ?? '') ?>" required>
+                                    <input type="tel" class="form-control" name="contact_number"
+                                        value="<?= htmlspecialchars($recipient['contact_number'] ?? '') ?>" required>
                                 </div>
                             </div>
                             <div class="needs-box bg-dp">
                                 <h5>Address Details</h5>
                                 <div class="mb-3">
-                                    <textarea class="form-control" name="address" rows="2" required><?= 
-                                        htmlspecialchars($recipient['address'] ?? '') 
-                                    ?></textarea>
+                                    <textarea class="form-control" name="address" rows="2" required><?=
+                                                                                                    htmlspecialchars($recipient['address'] ?? '')
+                                                                                                    ?></textarea>
                                 </div>
                             </div>
                             <div class="needs-box bg-dp">
                                 <h5>Add your cause</h5>
                                 <div class="mb-3">
-                                    <textarea class="form-control" name="cause" rows="4" required><?= 
-                                        htmlspecialchars($recipient['cause'] ?? '') 
-                                    ?></textarea>
+                                    <textarea class="form-control" name="cause" rows="4" required><?=
+                                                                                                    htmlspecialchars($recipient['cause'] ?? '')
+                                                                                                    ?></textarea>
                                 </div>
                             </div>
-                            <hr>                        
-                            <button type="submit" class="btn btn-pp mt-3 fw-bold">Update Profile</button>                            
+                            <hr>
+                            <button type="submit" class="btn btn-pp mt-3 fw-bold">Update Profile</button>
                         </form>
                     </div>
                 </div>
@@ -262,8 +274,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
                         </div>
                         <div class="mb-3">
                             <label for="feedbackText" class="form-label">Your Feedback</label>
-                            <textarea class="form-control" id="feedbackText" name="feedback" rows="3" 
-                                      placeholder="Please share your experience with us..." required></textarea>
+                            <textarea class="form-control" id="feedbackText" name="feedback" rows="3"
+                                placeholder="Please share your experience with us..." required></textarea>
                         </div>
                         <input type="hidden" name="submit_feedback" value="1">
                     </div>
@@ -280,9 +292,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['income'])) {
     <script>
         // Initialize Bootstrap tooltips
         var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl)
         });
     </script>
 </body>
+
 </html>
