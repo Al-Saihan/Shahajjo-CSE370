@@ -134,14 +134,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
                     </a>
                 </div>
             </div>
-            <!-- Minimum Zakat Amount Button -->
-            <div class="card profile-card mb-4 bg">
-                <div class="card-body text-center">
-                    <button type="button" class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#zakatModal">
-                        Minimum Zakat Amount
-                    </button>
-                </div>
-            </div>
+            <!-- Minimum Zakat Amount and Donate Zakat Buttons - Stacked Vertically -->
+             <div class="card profile-card mb-4 bg-light">
+                <div class="card-body text-center d-flex flex-column justify-content-center align-items-center gap-2">
+                    <!-- Minimum Zakat Button -->
+                     <button type="button" class="btn btn-success fw-bold w-50" data-bs-toggle="modal" data-bs-target="#zakatModal">
+                         Minimum Zakat Amount
+                        </button>
+            <!-- Donate Zakat Button -->
+             <button type="button" class="btn btn-success fw-bold w-50" data-bs-toggle="modal" data-bs-target="#donateZakatModal">
+                Donate Zakat
+            </button>
+        </div>
+    </div>
             <!-- Rate Us Button -->
             <div class="card profile-card mb-4 bg">
                 <div class="card-body text-center">
@@ -223,6 +228,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['total_income'])) {
     </div>
 </div>
 
+<!-- New Donate Zakat Modal with Amount Input -->
+<div class="modal fade" id="donateZakatModal" tabindex="-1" aria-labelledby="donateZakatModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="../donor/donate.php">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="donateZakatModalLabel">Donate Zakat</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <?php
+                    $zakat_threshold = 1139505.49;
+                    $income = floatval($donor['total_income'] ?? 0);
+                    $minimum_zakat = $income * 0.025;
+                    ?>
+                    
+                    <?php if ($income >= $zakat_threshold): ?>
+                        <div class="mb-3">
+                            <label for="zakatAmount" class="form-label">Enter Zakat Amount (Minimum: ৳<?= number_format($minimum_zakat, 2) ?>)</label>
+                            <div class="input-group">
+                                <span class="input-group-text">৳</span>
+                                <input type="number" class="form-control" id="zakatAmount" name="amount" 
+                                    min="<?= $minimum_zakat ?>" step="0.01" required
+                                    placeholder="Enter amount">
+                            </div>
+                            <small class="text-muted">Your minimum zakat amount is 2.5% of your yearly income.</small>
+                        </div>
+                    <?php elseif ($income > 0): ?>
+                        <div class="alert alert-danger">
+                            You are not eligible to pay zakat as your yearly income (৳<?= number_format($income, 2) ?>)
+                            is below the nisab threshold of ৳<?= number_format($zakat_threshold, 2) ?>.
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-warning">
+                            Please update your profile with your total income to check zakat eligibility.
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <?php if ($income >= $zakat_threshold): ?>
+                        <button type="submit" class="btn btn-primary">Proceed to Donate</button>
+                    <?php endif; ?>
+                </div>
+                <input type="hidden" name="zakat_donation" value="1">
+            </form>
+        </div>
+    </div>
+</div>
 
 <!-- Rating popup(modal) -->
 <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
