@@ -115,27 +115,29 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             </div>
             <div class="mt-3">
                 <a href="feedback" class="btn btn-pp btn-lg">See All Feedback</a>
-                </
+            </div>
+        </div>
+    </div>
 
 
-                    <!-- Footer -->
-                <footer class="text-center">
-                    <div class="container">
-                        <h5>Donation Management System</h5>
-                        <p>A platform to connect donors with recipients in need.</p>
-                        <div class="mt-3">
-                            <a href="index.php" class="text-white mx-2">Home</a>
-                            <a href="donations.php" class="text-white mx-2">Donations</a>
-                            <a href="about.php" class="text-white mx-2">About Us</a>
-                        </div>
-                        <div class="mt-3">
-                            <p>info@donationsystem.com<br>+123 456 7890</p>
-                        </div>
-                        <p class="mt-3 mb-0">&copy; 2025 Donation Management System. All rights reserved.</p>
-                    </div>
-                </footer>
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <h5>Donation Management System</h5>
+            <p>A platform to connect donors with recipients in need.</p>
+            <div class="mt-3">
+                <a href="index.php" class="text-white mx-2">Home</a>
+                <a href="donations.php" class="text-white mx-2">Donations</a>
+                <a href="about.php" class="text-white mx-2">About Us</a>
+            </div>
+            <div class="mt-3">
+                <p>info@donationsystem.com<br>+123 456 7890</p>
+            </div>
+            <p class="mt-3 mb-0">&copy; 2025 Donation Management System. All rights reserved.</p>
+        </div>
+    </footer>
 
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-                </>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </>
 
 </html>
