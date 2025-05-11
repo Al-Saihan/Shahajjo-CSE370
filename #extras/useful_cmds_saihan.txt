@@ -5,3 +5,4 @@ mysqldump -u root -p Shahajjo > Shahjjo.sql
 xamppstart
 xamppstop
 
+grep -rl "unauthorized.php" .
