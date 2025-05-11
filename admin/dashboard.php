@@ -383,11 +383,11 @@ try {
                                                         <h5>Administration Information</h5>
 
                                                         <div class="address-box">
-                                                            <p><strong>Account Type:</strong> <?= ucfirst($user['role']) ?></p>
+
                                                             <?php
                                                             try {
                                                                 $stmt = $pdo->prepare("
-                                                                SELECT admin_table.admin_id, admin_table.access_level
+                                                                SELECT admin_table.admin_id, admin_table.access_level, admin_table.creator
                                                                 FROM user_table
                                                                 INNER JOIN admin_table
                                                                 ON user_table.admin_id = admin_table.admin_id
@@ -398,6 +398,7 @@ try {
                                                                 if ($adminDetails) {
                                                                     echo '<p><strong>Admin ID:</strong> ' . htmlspecialchars($adminDetails['admin_id']) . '</p>';
                                                                     echo '<p><strong>Access Level:</strong> ' . htmlspecialchars(ucwords(str_replace('_', ' ', $adminDetails['access_level']))) . '</p>';
+                                                                    echo '<p><strong>Added By Admin ID:</strong> ' . ($adminDetails['creator'] ? htmlspecialchars(ucwords(str_replace('_', ' ', $adminDetails['creator']))) : '---') . '</p>';
                                                                 } else {
                                                                     echo '<p class="text-muted">Admin details not found</p>';
                                                                 }

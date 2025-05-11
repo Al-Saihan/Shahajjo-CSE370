@@ -69,6 +69,21 @@ if (!empty($errors)) {
 }
 
 // Process registration
+
+$creator = null;
+try {
+    $stmt = $pdo->prepare("SELECT admin_id FROM user_table WHERE id = :user_id");
+    $stmt->execute(['user_id' => $_SESSION['user_id']]);
+    $result = $stmt->fetch();
+    if ($result) {
+        $creator = $result['admin_id'];
+    } else {
+        die("Admin ID not found for the current user.");
+    }
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
+
 try {
     $pdo->beginTransaction();
 
@@ -78,13 +93,14 @@ try {
     // Insert into user_table
     $stmt = $pdo->prepare("
         INSERT INTO admin_table 
-        (admin_name, access_level) 
-        VALUES (?, ?)
+        (admin_name, access_level, creator) 
+        VALUES (?, ?, ?)
     ");
 
     $stmt->execute(params: [
         $ausername,
-        $access
+        $access,
+        $creator
     ]);
 
     $adminID = $pdo->lastInsertId();
