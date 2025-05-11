@@ -82,7 +82,7 @@ try {
         <table class="table table-striped table-hover text-center">
             <thead>
             <tr class="table-dark">
-                <th>ID</th>
+                <th>Recipient ID</th>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Action</th>
