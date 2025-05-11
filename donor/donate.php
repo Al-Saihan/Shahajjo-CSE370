@@ -45,23 +45,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
             /// Update recipient's wallet and last_received date
-            $updateRecipient = $pdo->prepare("
-                UPDATE recipient_table
-                SET wallet = wallet + ?, last_received = CURDATE()
-                WHERE id = ?
-            ");
-            $updateRecipient->execute([$amount, $recipient_id]);
+            // $updateRecipient = $pdo->prepare("
+            //     UPDATE recipient_table
+            //     SET wallet = wallet + ?, last_received = CURDATE()
+            //     WHERE id = ?
+            // ");
+            // $updateRecipient->execute([$amount, $recipient_id]);
 
             // Commit transaction
             $pdo->commit();
 
             $message = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
         } catch (Exception $e) {
-            // Only rollback if a transaction is active
+            if ($pdo->inTransaction()) {
                 $pdo->rollBack();
-                $_SESSION['message'] = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
-                header("Location: donate.php");
-                exit();
+            }
+            $_SESSION['message'] = "<div class='alert alert-danger text-center mt-3'>Database error: " . htmlspecialchars($e->getMessage()) . "</div>";
+            header("Location: donate.php");
+            exit();
         }
     } else {
         $_SESSION['message'] = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
