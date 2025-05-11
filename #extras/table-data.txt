@@ -70,17 +70,6 @@ CREATE TABLE savings_account (
 );
 
 
-
--- 6. ORGANIZATION_TABLE - Stores organization details for donations
-CREATE TABLE organization_table (
-  org_bin INT PRIMARY KEY,
-  name VARCHAR(255),
-  branch VARCHAR(255),
-  account VARCHAR(10)
-);
-
-
-
 -- 7. TOTAL_DONATIONS - Stores total donation records
 CREATE TABLE total_donations (
   donor_id INT(11),
@@ -112,33 +101,24 @@ CREATE TABLE receives (
 
 -- 9. FINANCIAL_DONATIONS - Stores records of financial donations made
 CREATE TABLE financial_donations (
-  donation_no INT PRIMARY KEY,
+  donation_no INT AUTO_INCREMENT PRIMARY KEY,
   money_amount DECIMAL(10,2),
-  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
+  td_no INT,
+  FOREIGN KEY (td_no) REFERENCES total_donations(donation_no)
 );
 
 
-
--- 10. ESSENTIAL_NEEDS - Stores records of essential items donated
-CREATE TABLE essential_needs (
-  donation_no INT PRIMARY KEY,
-  item_name VARCHAR(255),
-  item_quantity INT,
-  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
-);
-
-
-
--- 11. JAKAT_DONATION - Stores records of Jakat donations made
+-- 10. JAKAT_DONATION - Stores records of Jakat donations made
 CREATE TABLE jakat_donation (
-  donation_no INT PRIMARY KEY,
+  donation_no INT AUTO_INCREMENT PRIMARY KEY,
   jakat_amount DECIMAL(10,2),
-  FOREIGN KEY (donation_no) REFERENCES total_donations(donation_no)
+  td_no INT,
+  FOREIGN KEY (td_no) REFERENCES total_donations(donation_no)
 );
 
 
 
--- 12. FEEDBACK_TABLE - Stores user feedback and reviews
+-- 11. FEEDBACK_TABLE - Stores user feedback and reviews
 CREATE TABLE feedback_table (
   uid INT(11),
   review TEXT,
@@ -151,7 +131,7 @@ CREATE TABLE feedback_table (
 
 
 
--- 13. Creating REL between User and Admin
+-- 12. Creating REL between User and Admin
 ALTER TABLE user_table
 ADD COLUMN admin_id INT(11) NULL,
 ADD FOREIGN KEY (admin_id) REFERENCES admin_table(admin_id);
