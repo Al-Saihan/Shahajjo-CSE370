@@ -72,7 +72,6 @@ try {
             max-height: 75vh;
             /* 75% of viewport height */
             overflow-y: auto;
-            /* Enable vertical scrolling if needed */
         }
 
         .table-responsive {
@@ -147,7 +146,7 @@ try {
     </style>
 </head>
 
-<body>
+<body style="background: linear-gradient(to right, rgba(122, 99, 102, 0.58), rgb(255, 233, 235));">
     <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
         <div class="container">
             <a class="navbar-brand auth-logo fw-bold text-white fs-3" href="../index.php">Shahajjo</a>

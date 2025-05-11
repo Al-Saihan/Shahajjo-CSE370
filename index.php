@@ -23,11 +23,13 @@ if (session_status() === PHP_SESSION_NONE) session_start();
             padding: 2rem 0;
             margin-top: 4rem;
         }
+
         .bg-pp {
-            background-color:rgba(52, 58, 64, 1);
+            background-color: rgba(52, 58, 64, 1);
         }
+
         .btn-pp {
-            background-color:rgba(0, 0, 0, 0.27);
+            background-color: rgba(0, 0, 0, 0.27);
         }
     </style>
 </head>
@@ -90,7 +92,7 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                     $isActive = true; // flages the first class as active for the carousel (Bootstrap Issue)
                     foreach ($feedbacks as $feedback) {
                         echo '<div class="carousel-item' . ($isActive ? ' active' : '') . '">';
-                        echo '<div class="d-block w-100 p-4 bg-light rounded">';
+                        echo '<div class="d-block w-100 p-4 rounded" style="background-color: rgba(255, 255, 255, 0.25); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">';
                         echo '<p class="mb-1"> ' . htmlspecialchars($feedback['first_name'] . ' ' . ($feedback['middle_name'] ?? '') . ' ' . ($feedback['last_name'] ?? '')) . '</p>';
                         echo '<p class="mb-1"><strong>Stars:</strong> ' . str_repeat('⭐', $feedback['stars']) . '</p>';
                         echo '<p class="mb-0">' . htmlspecialchars($feedback['review']) . '</p>';
@@ -102,32 +104,38 @@ if (session_status() === PHP_SESSION_NONE) session_start();
                     die("Database error: " . $e->getMessage());
                 }
                 ?>
+                <button class="carousel-control-prev" type="button" data-bs-target="#feedback-carousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#feedback-carousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
             <div class="mt-3">
                 <a href="feedback" class="btn btn-pp btn-lg">See All Feedback</a>
-            </div>
-        </div>
-    </div>
+                </
 
 
-    <!-- Footer -->
-    <footer class="text-center">
-        <div class="container">
-            <h5>Donation Management System</h5>
-            <p>A platform to connect donors with recipients in need.</p>
-            <div class="mt-3">
-                <a href="index.php" class="text-white mx-2">Home</a>
-                <a href="donations.php" class="text-white mx-2">Donations</a>
-                <a href="about.php" class="text-white mx-2">About Us</a>
-            </div>
-            <div class="mt-3">
-                <p>info@donationsystem.com<br>+123 456 7890</p>
-            </div>
-            <p class="mt-3 mb-0">&copy; 2025 Donation Management System. All rights reserved.</p>
-        </div>
-    </footer>
+                    <!-- Footer -->
+                <footer class="text-center">
+                    <div class="container">
+                        <h5>Donation Management System</h5>
+                        <p>A platform to connect donors with recipients in need.</p>
+                        <div class="mt-3">
+                            <a href="index.php" class="text-white mx-2">Home</a>
+                            <a href="donations.php" class="text-white mx-2">Donations</a>
+                            <a href="about.php" class="text-white mx-2">About Us</a>
+                        </div>
+                        <div class="mt-3">
+                            <p>info@donationsystem.com<br>+123 456 7890</p>
+                        </div>
+                        <p class="mt-3 mb-0">&copy; 2025 Donation Management System. All rights reserved.</p>
+                    </div>
+                </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+                </>
 
 </html>
