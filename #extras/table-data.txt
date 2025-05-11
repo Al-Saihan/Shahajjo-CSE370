@@ -111,7 +111,7 @@ CREATE TABLE financial_donations (
 -- 9. JAKAT_DONATION - Stores records of Jakat donations made
 CREATE TABLE jakat_donation (
   donation_no INT AUTO_INCREMENT PRIMARY KEY,
-  confirmation TINYINT DEFAULT 0,
+  jakat_type (255) NOT NULL,
   td_no INT,
   FOREIGN KEY (td_no) REFERENCES total_donations(donation_no)
 );
