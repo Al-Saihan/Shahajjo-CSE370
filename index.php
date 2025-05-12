@@ -54,9 +54,9 @@ if (session_status() === PHP_SESSION_NONE) session_start();
 
             <!-- // ! NOTE -->
             <!-- // !? TEMPORARY BUTTONS FOR TESTING PURPOSES -- REMOVE THIS IN PRODUCTION -->
-            <div class="mt-4">
-                <a href="refreshDB.php" class="btn btn-danger btn-lg me-2" onclick="return confirm('Are You Sure You Want To Rebuild The Database With Dummy Users?');">Refresh Database<br>TEMPORARY</a>
-            </div>
+            <!-- <div class="mt-4"> -->
+            <!-- <a href="refreshDB.php" class="btn btn-danger btn-lg me-2" onclick="return confirm('Are You Sure You Want To Rebuild The Database With Dummy Users?');">Refresh Database<br>TEMPORARY</a> -->
+            <!-- </div> -->
             <!-- // ? TEMPORARY BUTTONS FOR TESTING PURPOSES -- REMOVE THIS IN PRODUCTION -->
             <!-- // ! NOTE -->
 
