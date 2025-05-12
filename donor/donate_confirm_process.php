@@ -48,6 +48,14 @@ try {
     ");
     $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
+    // Insert into financial_donations table
+            $finStmt = $pdo->prepare("
+                INSERT INTO financial_donations 
+                (payment_type, td_no) 
+                VALUES (?, ?)
+            ");
+            $finStmt->execute([$method, $nextDonationNo]);
+
     $pdo->commit();
 
     // Clear session

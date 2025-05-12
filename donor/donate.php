@@ -220,7 +220,7 @@ try {
                                             <option value="nagad">Nagad</option>
                                             <option value="upay">Upay</option>
                                             <option value="rocket">Rocket</option>
-                                            <option value="bank">Bank Transfer</option>
+                                            <option value="bank_transfer">Bank Transfer</option>
                                         </select>
                                     </div>
                                 </div>
