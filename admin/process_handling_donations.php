@@ -56,26 +56,56 @@ try {
     }
 
     // Process based on action
+    $verifier = null;
+    try {
+        $stmt = $pdo->prepare("SELECT admin_id FROM user_table WHERE id = :user_id");
+        $stmt->execute(['user_id' => $_SESSION['user_id']]);
+        $result = $stmt->fetch();
+        if ($result) {
+            $verifier = $result['admin_id'];
+        } else {
+            die("Donation Failed, Try to log out and then log in, and try again.");
+        }
+    } catch (PDOException $e) {
+        die("Database error: " . $e->getMessage());
+    }
+
     if ($action === 'confirm') {
-        $updateStmt = $pdo->prepare("UPDATE total_donations SET confirmation = 1 WHERE donation_no = ?");
-        $updateStmt->execute([$donation_row['donation_no']]);
-        $updateStmt2 = $pdo->prepare("UPDATE recipient_table SET wallet = wallet + ?, last_received = ? WHERE user_id = ?");
-        $updateStmt2->execute([
-            $donation_row['donations_amount'],
-            $donation_row['donation_date'],
-            $donation_row['recipient_uid']
-        ]);
-        $updateStmt3 = $pdo->prepare("UPDATE donor_table SET total_donations = total_donations + 1, last_donation = ? WHERE user_id = ?");
-        $updateStmt3->execute([
-            $donation_row['donation_date'],
-            $donation_row['donor_uid']
-        ]);
+        try {
+            $updateStmt = $pdo->prepare("UPDATE total_donations SET confirmation = 1, a_id = ? WHERE donation_no = ?");
+            $updateStmt->execute([$verifier, $donation_row['donation_no']]);
+
+            $updateStmt2 = $pdo->prepare("UPDATE recipient_table SET wallet = wallet + ?, last_received = ? WHERE user_id = ?");
+            $updateStmt2->execute([
+                $donation_row['donations_amount'],
+                $donation_row['donation_date'],
+                $donation_row['recipient_uid']
+            ]);
+
+            $updateStmt3 = $pdo->prepare("UPDATE donor_table SET total_donations = total_donations + 1, last_donation = ? WHERE user_id = ?");
+            $updateStmt3->execute([
+                $donation_row['donation_date'],
+                $donation_row['donor_uid']
+            ]);
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            $_SESSION['error'] = "Database error during donation confirmation: " . $e->getMessage();
+            header("Location: dashboard.php");
+            exit();
+        }
 
         $_SESSION['success'] = "Donation #" . htmlspecialchars($donation_row['donation_no']) . " has been successfully confirmed. Amount Added: " . htmlspecialchars($donation_row['donations_amount']) . ", Donation Date: " . htmlspecialchars($donation_row['donation_date']) . ", Recipient UID: " . htmlspecialchars($donation_row['recipient_uid']) . ".";
     } elseif ($action === 'reject') {
-        $updateStmt = $pdo->prepare("UPDATE total_donations SET confirmation = 2 WHERE donation_no = ?");
-        $updateStmt->execute([$donation_row['donation_no']]);
-        $_SESSION['success'] = "Donation #" . htmlspecialchars($donation_row['donation_no']) . " has been successfully rejected. Donor and Recipient information were not updated.";
+        try {
+            $updateStmt = $pdo->prepare("UPDATE total_donations SET confirmation = 2, a_id = ? WHERE donation_no = ?");
+            $updateStmt->execute([$verifier, $donation_row['donation_no']]);
+            $_SESSION['success'] = "Donation #" . htmlspecialchars($donation_row['donation_no']) . " has been successfully rejected. Donor and Recipient information were not updated.";
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            $_SESSION['error'] = "Database error during donation rejection: " . $e->getMessage();
+            header("Location: dashboard.php");
+            exit();
+        }
     } else {
         $_SESSION['error'] = "Invalid action specified.";
         $pdo->rollBack();
