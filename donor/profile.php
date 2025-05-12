@@ -269,7 +269,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['zakat_donation'])) {
                             <div class="mb-3">
                                 <label class="form-label">Total Income (yearly)</label>
                                 <input type="number" class="form-control" name="total_income"
-                                    value="<?= htmlspecialchars($donor['total_income'] ?? '') ?>" required>
+                                value="<?= htmlspecialchars($donor['total_income'] ?? '') ?>" required>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Email</label>
