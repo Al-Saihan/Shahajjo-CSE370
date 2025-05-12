@@ -76,6 +76,8 @@ CREATE TABLE total_donations (
   donations_amount DECIMAL(10,2),
   donation_date DATE DEFAULT CURRENT_TIMESTAMP,
   confirmation TINYINT DEFAULT 0,
+  a_id INT(11),
+  FOREIGN KEY (a_id) REFERENCES admin_table(admin_id),
   FOREIGN KEY (donor_id) REFERENCES donor_table(id),
   FOREIGN KEY (recipient_id) REFERENCES recipient_table(id)
 );
