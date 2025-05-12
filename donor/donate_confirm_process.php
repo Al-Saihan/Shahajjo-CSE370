@@ -58,6 +58,15 @@ try {
 
     $pdo->commit();
 
+    // ✅ UPDATE donor_table total_donations count
+    $stmt = $pdo->prepare("
+    UPDATE donor_table 
+    SET total_donations = total_donations + 1, 
+    last_donation = NOW() 
+    WHERE user_id = ?
+    ");
+    $stmt->execute([$_SESSION['user_id']]);
+
     // Clear session
     unset($_SESSION['pending_donation']);
 
