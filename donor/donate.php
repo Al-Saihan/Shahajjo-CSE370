@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $recipient_id = $_POST['recipient_id'] ?? null;
     $amount = $_POST['amount'] ?? null;
     $method = $_POST['method'] ?? null;
-    $donation_type = $_POST['donation_type'] ?? null;
+    $donation_type = $_POST['donation_type'] ?? 'financial'; // Default to financial if not set
 
     if ($recipient_id && $amount && $method) {
         try {
@@ -45,18 +45,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
-            // Insert into specific table
-            if ($donation_type === 'zakat') {
-                $zakatStmt = $pdo->prepare("INSERT INTO jakat_donation (jakat_amount, td_no) VALUES (?, ?)");
-                $zakatStmt->execute([$amount, $nextDonationNo]);
-            } elseif ($donation_type === 'financial') {
-                $finStmt = $pdo->prepare("INSERT INTO financial_donations (money_amount, td_no) VALUES (?, ?)");
-                $finStmt->execute([$amount, $nextDonationNo]);
-            }
+            // Insert into financial_donations table
+            $finStmt = $pdo->prepare("
+                INSERT INTO financial_donations 
+                (payment_type, td_no) 
+                VALUES (?, ?)
+            ");
+            $finStmt->execute([$method, $nextDonationNo]);
+
+            // Update donor's donation count
+            $updateStmt = $pdo->prepare("
+                UPDATE donor_table 
+                SET total_donations = total_donations + 1, 
+                    last_donation = NOW() 
+                WHERE id = ?
+            ");
+            $updateStmt->execute([$donor_id]);
 
             $pdo->commit();
 
-            $message = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
+            $_SESSION['message'] = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
         } catch (Exception $e) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
@@ -187,48 +195,43 @@ try {
                 </tr>
 
                 <!-- Modal -->
-                <div class="modal fade" id="donateModal<?= $recipient['recipient_table_id'] ?>" tabindex="-1" aria-labelledby="donateModalLabel<?= $recipient['recipient_table_id'] ?>" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <form method="POST" action="donation_confirm.php">
-                                <div class="modal-header bg-success text-white">
-                                    <h5 class="modal-title" id="donateModalLabel<?= $recipient['recipient_table_id'] ?>">
-                                        Donate to <?= htmlspecialchars($recipient['first_name'] . ' ' . $recipient['last_name']) ?>
-                                    </h5>
-                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="recipient_id" value="<?= $recipient['recipient_table_id'] ?>">
-                                    <div class="mb-3">
-                                        <label class="form-label">Donation Type</label>
-                                        <select name="donation_type" class="form-select" required>
-                                            <option value="">Select Type</option>
-                                            <option value="zakat">Zakat Donation</option>
-                                            <option value="financial">Financial Donation</option>
-                                        </select>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Amount (BDT)</label>
-                                        <input type="number" name="amount" class="form-control" required min="1">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label">Payment Method</label>
-                                        <select name="method" class="form-select" required>
-                                            <option value="">Select</option>
-                                            <option value="bkash">bKash</option>
-                                            <option value="nagad">Nagad</option>
-                                            <option value="bank">Bank Transfer</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-success">Donate</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
+<div class="modal fade" id="donateModal<?= $recipient['recipient_table_id'] ?>" tabindex="-1" aria-labelledby="donateModalLabel<?= $recipient['recipient_table_id'] ?>" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="donation_confirm.php">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="donateModalLabel<?= $recipient['recipient_table_id'] ?>">
+                        Donate to <?= htmlspecialchars($recipient['first_name'] . ' ' . $recipient['last_name']) ?>
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="recipient_id" value="<?= $recipient['recipient_table_id'] ?>">
+                    <input type="hidden" name="donation_type" value="financial"> <!-- Fixed as financial donation -->
+                    <div class="mb-3">
+                        <label class="form-label">Amount (BDT)</label>
+                        <input type="number" name="amount" class="form-control" required min="1">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Payment Type</label> <!-- Changed from Payment Method -->
+                        <select name="method" class="form-select" required>
+                            <option value="">Select Payment Type</option>
+                            <option value="bkash">bKash</option>
+                            <option value="nagad">Nagad</option>
+                            <option value="upay">Upay</option>
+                            <option value="rocket">Rocket</option>
+                            <option value="bank_transfer">Bank Transfer</option>
+                        </select>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Donate</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div
             <?php endforeach; ?>
             </tbody>
         </table>
