@@ -134,7 +134,7 @@ INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email
 (2, 'Jawadul', 'Idur', 'Hoque', 'd@gmail.com', '$2y$10$dgtYKavxWYxH3zfF/Wm6j.8GkllitA4y0TtbRlbpCzDYSCqacIXZ.', 'donor', 'verified', NULL);
 
 INSERT INTO `user_table` (`id`, `first_name`, `middle_name`, `last_name`, `email`, `password`, `role`, `status`, `admin_id`) VALUES 
-(3, 'Saif', 'Sissy', 'Uddin', 'r@gmail.com', '$2y$10$LBoZ/Jk6htpOe.uMZeVJ/ORmOqC3uD6XpWeihk6rv4sQF/DJFfetS', 'recipient', 'unverified', NULL);
+(3, 'Saif', 'Pakhi', 'Uddin', 'r@gmail.com', '$2y$10$LBoZ/Jk6htpOe.uMZeVJ/ORmOqC3uD6XpWeihk6rv4sQF/DJFfetS', 'recipient', 'unverified', NULL);
 
 INSERT INTO `donor_table` (`id`, `user_id`, `total_donations`, `last_donation`, `address`, `contact_number`) VALUES 
 (1, 2, 0, NULL, 'Uttara', '01714425594');
@@ -198,12 +198,10 @@ INSERT INTO feedback_table (uid, review, posting_date, stars) VALUES
 
 -- 15. Withdrawal log TABLE
 CREATE TABLE savings_withdrawal_log (
-  withdrawal_id INT(11) NOT NULL AUTO_INCREMENT,
   account_no INT(11) NOT NULL,
   amount DECIMAL(10,2) NOT NULL,
   withdrawal_method ENUM('bkash', 'nagad', 'upay', 'rocket', 'bank_transfer') NOT NULL,
   transaction_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (withdrawal_id),
   KEY account_no (account_no), 
   FOREIGN KEY (account_no) REFERENCES savings_account(account_no)
 );
