@@ -44,9 +44,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $insert->execute([$donor_id, $recipient_id, $nextDonationNo, $amount]);
 
+            // Insert into financial_donations table
+            $finStmt = $pdo->prepare("
+                INSERT INTO financial_donations 
+                (payment_type, td_no) 
+                VALUES (?, ?)
+            ");
+            $finStmt->execute([$method, $nextDonationNo]);
+
             $pdo->commit();
 
-            $message = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
+            $_SESSION['message'] = "<div class='alert alert-success text-center mt-3'>Donation submitted successfully!</div>";
+            header("Location: donate.php");
+            exit();
         } catch (Exception $e) {
             if ($pdo->inTransaction()) {
                 $pdo->rollBack();
@@ -88,6 +98,8 @@ try {
         .user-details { background-color: #f8f9fa; border-radius: 5px; padding: 15px; margin-top: 10px; }
         .address-box { background-color: white; border: 1px solid #dee2e6; border-radius: 5px; padding: 10px; margin-bottom: 10px; }
         .modal-header h5 { margin: 0; }
+        .clickable-row { cursor: pointer; }
+        .clickable-row:hover { background-color: rgba(0,0,0,0.05); }
     </style>
 </head>
 <body style="background: linear-gradient(to right,rgba(4, 28, 46, 0.51),rgb(135, 165, 209));"></body>
@@ -193,7 +205,6 @@ try {
                                         <label class="form-label">Donation Type</label>
                                         <select name="donation_type" class="form-select" required>
                                             <option value="">Select Type</option>
-                                            <option value="zakat">Zakat Donation</option>
                                             <option value="financial">Financial Donation</option>
                                         </select>
                                     </div>
@@ -207,6 +218,8 @@ try {
                                             <option value="">Select</option>
                                             <option value="bkash">bKash</option>
                                             <option value="nagad">Nagad</option>
+                                            <option value="upay">Upay</option>
+                                            <option value="rocket">Rocket</option>
                                             <option value="bank">Bank Transfer</option>
                                         </select>
                                     </div>
